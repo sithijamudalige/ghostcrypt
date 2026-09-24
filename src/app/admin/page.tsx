@@ -110,7 +110,18 @@ export default function AdminDashboard() {
 
   const addQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedQuiz) return alert("Select a quiz first!");
+    if (!selectedQuiz) return alert("Enter Quiz Title!");
+
+    let quizId = selectedQuiz;
+    
+    // If it doesn't look like a UUID, search for the quiz by title
+    if (!selectedQuiz.includes('-')) {
+      const { data: qData, error: qErr } = await supabase.from('quizzes').select('id').ilike('title', selectedQuiz).single();
+      if (qErr || !qData) {
+        return alert("Could not find a Quiz with that title! Please make sure the title exactly matches.");
+      }
+      quizId = qData.id;
+    }
 
     const options = [optA, optB, optC, optD];
     let correctText = optA;
@@ -119,18 +130,18 @@ export default function AdminDashboard() {
     if (correctAnswer === "D") correctText = optD;
 
     const { error } = await supabase.from('questions').insert([{
-      quiz_id: selectedQuiz,
+      quiz_id: quizId,
       question_text: questionText,
       options: options,
       correct_answer: correctText
     }]);
 
     if (!error) {
-      alert("Question added!");
+      alert("Question added successfully!");
       setQuestionText("");
       setOptA(""); setOptB(""); setOptC(""); setOptD("");
     } else {
-      alert("Error adding question");
+      alert("Database Error (Did you run unlock_quizzes_rls.sql?): " + error.message);
     }
   };
 
@@ -282,8 +293,8 @@ export default function AdminDashboard() {
           <h2>2. Add Questions to Quiz</h2>
           <form onSubmit={addQuestion}>
             <div className="input-group">
-              <label>Quiz ID</label>
-              <input type="text" value={selectedQuiz} onChange={e => setSelectedQuiz(e.target.value)} required placeholder="Paste Quiz ID here" />
+              <label>Quiz Title</label>
+              <input type="text" value={selectedQuiz} onChange={e => setSelectedQuiz(e.target.value)} required placeholder="Type the Quiz Title here" />
             </div>
             <div className="input-group">
               <label>Question Text</label>
