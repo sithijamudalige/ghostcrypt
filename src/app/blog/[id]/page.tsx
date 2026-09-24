@@ -33,7 +33,7 @@ export default function ArticleView() {
       <div className="orb orb-1"></div>
       <div className="orb orb-2"></div>
       
-      <main className="glass-panel legal-panel" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+      <main style={{ marginTop: '2rem', marginBottom: '4rem', padding: '2rem', maxWidth: '1000px', margin: '2rem auto', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
         <Link href="/" style={{ color: 'var(--accent)', textDecoration: 'none', display: 'inline-block', marginBottom: '2rem' }}>
           &larr; Back to Home
         </Link>
