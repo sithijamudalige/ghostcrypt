@@ -23,25 +23,46 @@ export default function BlogIndex() {
 
   return (
     <>
-      <main className="glass-panel legal-panel" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
-        <p className="subtitle" style={{ fontSize: '1.2rem' }}>Latest insights published by our community</p>
+      <main style={{ marginTop: '2rem', marginBottom: '4rem', padding: '0 2rem', maxWidth: '1400px', margin: '2rem auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Latest Articles</h1>
+          <p className="subtitle" style={{ fontSize: '1.2rem', margin: 0 }}>Insights, labs, and guides published by our community</p>
+        </div>
         
         {loading ? (
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading articles...</p>
         ) : articles.length === 0 ? (
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>No articles published yet. Be the first!</p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))', 
+            gap: '2rem', 
+            marginTop: '2rem' 
+          }}>
             {articles.map(article => (
-              <div key={article.id} className="content-section" style={{ background: 'rgba(0,0,0,0.4)', marginTop: 0 }}>
-                <h2><Link href={`/blog/${article.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>{article.title}</Link></h2>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                  By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
-                </p>
-                <p style={{ marginTop: '1rem', color: 'var(--text-secondary)' }}>
-                  {article.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)}...
-                </p>
-                <Link href={`/blog/${article.id}`} style={{ color: 'var(--accent)' }}>Read Full Article &rarr;</Link>
+              <div key={article.id} className="glass-panel" style={{ 
+                margin: 0, 
+                maxWidth: '100%', 
+                display: 'flex', 
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                padding: '2rem'
+              }}>
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', lineHeight: '1.3', marginBottom: '1rem' }}>
+                    <Link href={`/blog/${article.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>{article.title}</Link>
+                  </h2>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '1rem' }}>
+                    By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
+                  </p>
+                  <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    {article.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)}...
+                  </p>
+                </div>
+                <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <Link href={`/blog/${article.id}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>Read Full Article <span style={{ fontSize: '1.2rem' }}>&rarr;</span></Link>
+                </div>
               </div>
             ))}
           </div>
