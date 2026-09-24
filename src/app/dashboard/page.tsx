@@ -125,7 +125,7 @@ export default function Dashboard() {
     } else {
       const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
       const displayName = labName.trim() !== '' ? labName : file.name;
-      setContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${displayName}</a>\n\n`);
+      setContent(prev => prev + `\n\n<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--accent); margin: 15px 0;">\n  <a href="${publicUrl}" target="_blank" class="lab-download-btn" style="margin-top:0;">⬇️ Download Lab: ${displayName}</a>\n  <p style="margin: 10px 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">Direct Link: <code style="user-select: all; background: #000; padding: 4px; border-radius: 4px;">${publicUrl}</code></p>\n</div>\n\n`);
       setMessage("Lab file uploaded and injected into article!");
     }
     setIsPublishing(false);
