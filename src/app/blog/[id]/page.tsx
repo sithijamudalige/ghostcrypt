@@ -58,6 +58,10 @@ export default function ArticleView() {
           <ReactMarkdown
             rehypePlugins={[rehypeRaw]}
             components={{
+              style: () => <></>,
+              head: () => <></>,
+              title: () => <></>,
+              meta: () => <></>,
               img: ({node, ...props}) => <img style={{maxWidth: '100%', height: 'auto', borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'}} {...props} />,
               p: ({node, ...props}) => <p style={{marginBottom: '1rem'}} {...props} />,
               a: ({node, ...props}) => <a style={{color: 'var(--accent)'}} target="_blank" {...props} />

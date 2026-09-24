@@ -149,8 +149,30 @@ export default function AdminDashboard() {
       setArticleMessage("Error uploading image: " + error.message);
     } else {
       const { data: { publicUrl } } = supabase.storage.from('article_images').getPublicUrl(fileName);
-      setArticleContent(prev => prev + `\n\n![Embedded Image](${publicUrl})\n\n`);
+      setArticleContent(prev => prev + `\n\n<img src="${publicUrl}" alt="Embedded Image" />\n\n`);
       setArticleMessage("Image uploaded and injected into your article!");
+    }
+    setIsPublishingArticle(false);
+  };
+
+  const uploadLabFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishingArticle(true);
+    setArticleMessage("Uploading lab file...");
+    
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    
+    const { error } = await supabase.storage
+      .from('labs')
+      .upload(fileName, file);
+      
+    if (error) {
+      setArticleMessage("Error uploading lab: " + error.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
+      setArticleContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${file.name}</a>\n\n`);
+      setArticleMessage("Lab file uploaded and injected into article!");
     }
     setIsPublishingArticle(false);
   };
@@ -296,9 +318,15 @@ export default function AdminDashboard() {
             <label>YouTube Embed Link (Optional)</label>
             <input type="text" value={articleYoutube} onChange={e => setArticleYoutube(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
           </div>
-          <div className="input-group">
-            <label>Insert Image into Article (Uploads automatically)</label>
-            <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="input-group">
+              <label>Insert Image</label>
+              <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+            </div>
+            <div className="input-group">
+              <label>Attach Lab File (.pkt, .ipynb)</label>
+              <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+            </div>
           </div>
           <div className="input-group" data-color-mode="dark">
             <label>Article Content (Use the toolbar to add tables and format text!)</label>
