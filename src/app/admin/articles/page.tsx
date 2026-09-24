@@ -57,7 +57,7 @@ export default function AdminArticles() {
     const { error } = await supabase.storage.from('article_images').upload(fileName, file);
     if (!error) {
       const { data: { publicUrl } } = supabase.storage.from('article_images').getPublicUrl(fileName);
-      setArticleContent(prev => prev + `\n\n<img src="${publicUrl}" alt="Embedded Image" />\n\n`);
+      setArticleContent(prev => prev + `\n\n![Embedded Image](${publicUrl})\n\n`);
       setArticleMessage("Image uploaded!");
     } else {
       setArticleMessage("Error: " + error.message);
