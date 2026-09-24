@@ -182,7 +182,9 @@ export default function AdminDashboard() {
 
   const publishAdminArticle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!articleTitle || !articleContent) return alert("Title and content are required");
+    if (!articleTitle) return alert("Title is required");
+    if (!isLabPost && !articleContent) return alert("Article content is required");
+    if (isLabPost && !articleContent) return alert("Please attach a Lab file first!");
     setIsPublishingArticle(true);
     
     let finalYoutubeId = articleYoutube;
@@ -348,23 +350,25 @@ export default function AdminDashboard() {
               <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
             </div>
           </div>
-          <div className="input-group" data-color-mode="dark">
-            <label>Article Content (Use the toolbar to add tables and format text!)</label>
-            <MDEditor 
-              value={articleContent} 
-              onChange={val => setArticleContent(val || '')} 
-              style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
-              previewOptions={{
-                rehypePlugins: [[rehypeRaw]],
-                components: {
-                  style: ({node, ...props}: any) => <style dangerouslySetInnerHTML={{ __html: props.children }} />,
-                  head: () => <></>,
-                  title: () => <></>,
-                  meta: () => <></>
-                }
-              }}
-            />
-          </div>
+          {!isLabPost && (
+            <div className="input-group" data-color-mode="dark">
+              <label>Article Content (Use the toolbar to add tables and format text!)</label>
+              <MDEditor 
+                value={articleContent} 
+                onChange={val => setArticleContent(val || '')} 
+                style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+                previewOptions={{
+                  rehypePlugins: [[rehypeRaw]],
+                  components: {
+                    style: ({node, ...props}: any) => <style dangerouslySetInnerHTML={{ __html: props.children }} />,
+                    head: () => <></>,
+                    title: () => <></>,
+                    meta: () => <></>
+                  }
+                }}
+              />
+            </div>
+          )}
           {articleMessage && <p style={{ color: articleMessage.includes('Error') ? 'var(--error)' : 'var(--accent)', marginBottom: '1rem' }}>{articleMessage}</p>}
           <button type="submit" className="primary" disabled={isPublishingArticle}>
             {isPublishingArticle ? 'Publishing...' : 'Publish Article'}

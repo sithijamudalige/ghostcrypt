@@ -55,7 +55,9 @@ export default function Dashboard() {
 
   const publishArticle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !content) return alert("Title and content are required");
+    if (!title) return alert("Title is required");
+    if (!isLabPost && !content) return alert("Article content is required");
+    if (isLabPost && !content) return alert("Please attach a Lab file first!");
     setIsPublishing(true);
     
     // Extract video ID if they pasted a full URL
@@ -197,23 +199,25 @@ export default function Dashboard() {
                 <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
               </div>
             </div>
-            <div className="input-group" data-color-mode="dark">
-              <label>Article Content (Use the toolbar to add tables and format text!)</label>
-              <MDEditor 
-                value={content} 
-                onChange={val => setContent(val || '')} 
-                style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
-                previewOptions={{
-                  rehypePlugins: [[rehypeRaw]],
-                  components: {
-                    style: ({node, ...props}: any) => <style dangerouslySetInnerHTML={{ __html: props.children }} />,
-                    head: () => <></>,
-                    title: () => <></>,
-                    meta: () => <></>
-                  }
-                }}
-              />
-            </div>
+            {!isLabPost && (
+              <div className="input-group" data-color-mode="dark">
+                <label>Article Content (Use the toolbar to add tables and format text!)</label>
+                <MDEditor 
+                  value={content} 
+                  onChange={val => setContent(val || '')} 
+                  style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+                  previewOptions={{
+                    rehypePlugins: [[rehypeRaw]],
+                    components: {
+                      style: ({node, ...props}: any) => <style dangerouslySetInnerHTML={{ __html: props.children }} />,
+                      head: () => <></>,
+                      title: () => <></>,
+                      meta: () => <></>
+                    }
+                  }}
+                />
+              </div>
+            )}
             {message && <p style={{ color: message.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{message}</p>}
             <button type="submit" className="primary" disabled={isPublishing}>
               {isPublishing ? 'Publishing...' : 'Publish Article'}
