@@ -39,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </Link>
           <div className="navbar-links">
             <Link href="/">Articles</Link>
+            <Link href="/labs" style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Labs</Link>
             <Link href="/quizzes">Quizzes</Link>
             <Link href="/encrypt">GhostCrypt</Link>
             <Link href="/login" style={{ color: 'var(--accent)' }}>Dashboard</Link>
