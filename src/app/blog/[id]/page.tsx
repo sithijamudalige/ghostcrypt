@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
@@ -52,8 +53,16 @@ export default function ArticleView() {
           </div>
         )}
 
-        <section className="content-section" style={{ background: 'transparent', border: 'none', padding: 0, marginTop: '2rem', whiteSpace: 'pre-wrap' }}>
-          {article.content}
+        <section className="content-section article-content" style={{ background: 'transparent', border: 'none', padding: 0, marginTop: '2rem', lineHeight: 1.8 }}>
+          <ReactMarkdown
+            components={{
+              img: ({node, ...props}) => <img style={{maxWidth: '100%', height: 'auto', borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'}} {...props} />,
+              p: ({node, ...props}) => <p style={{marginBottom: '1rem'}} {...props} />,
+              a: ({node, ...props}) => <a style={{color: 'var(--accent)'}} target="_blank" {...props} />
+            }}
+          >
+            {article.content}
+          </ReactMarkdown>
         </section>
       </main>
     </>

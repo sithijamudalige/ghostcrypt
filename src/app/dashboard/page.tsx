@@ -79,6 +79,29 @@ export default function Dashboard() {
     }
   };
 
+  const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishing(true);
+    setMessage("Uploading image to secure storage...");
+    
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    
+    const { error } = await supabase.storage
+      .from('article_images')
+      .upload(fileName, file);
+      
+    if (error) {
+      setMessage("Error uploading image: " + error.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from('article_images').getPublicUrl(fileName);
+      setContent(prev => prev + `\n\n![Embedded Image](${publicUrl})\n\n`);
+      setMessage("Image uploaded and injected into your article!");
+    }
+    setIsPublishing(false);
+  };
+
   const createQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quizTitle) return alert("Title required");
@@ -120,7 +143,11 @@ export default function Dashboard() {
               <input type="text" value={youtubeId} onChange={e => setYoutubeId(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
             </div>
             <div className="input-group">
-              <label>Article Content</label>
+              <label>Insert Image into Article (Uploads automatically)</label>
+              <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
+            </div>
+            <div className="input-group">
+              <label>Article Content (Markdown Supported)</label>
               <textarea value={content} onChange={e => setContent(e.target.value)} required rows={10} placeholder="Write your article here..."></textarea>
             </div>
             {message && <p style={{ color: message.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{message}</p>}
