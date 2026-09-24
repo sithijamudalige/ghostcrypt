@@ -175,19 +175,21 @@ export default function Dashboard() {
           <h2>Publish New Content</h2>
           <form onSubmit={publishArticle} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
             
-            <div className="input-group" style={{ marginBottom: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-              <label style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1rem' }}>Content Type</label>
-              <div style={{ display: 'flex', gap: '2rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
-                  <input type="radio" checked={!isLabPost} onChange={() => setIsLabPost(false)} style={{ width: '20px', height: '20px' }} /> 
-                  Standard Article
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
-                  <input type="radio" checked={isLabPost} onChange={() => setIsLabPost(true)} style={{ width: '20px', height: '20px' }} /> 
-                  Hands-On Lab
-                </label>
+            {role === 'admin' && (
+              <div className="input-group" style={{ marginBottom: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                <label style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1rem' }}>Content Type</label>
+                <div style={{ display: 'flex', gap: '2rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                    <input type="radio" checked={!isLabPost} onChange={() => setIsLabPost(false)} style={{ width: '20px', height: '20px' }} /> 
+                    Standard Article
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                    <input type="radio" checked={isLabPost} onChange={() => setIsLabPost(true)} style={{ width: '20px', height: '20px' }} /> 
+                    Hands-On Lab
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="input-group">
               <label>{isLabPost ? 'Lab Title' : 'Article Title'}</label>
@@ -197,16 +199,18 @@ export default function Dashboard() {
               <label>YouTube Video URL or ID (Optional)</label>
               <input type="text" value={youtubeId} onChange={e => setYoutubeId(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
             </div>
-            <div className="responsive-grid-2-end">
+            <div className={role === 'admin' ? "responsive-grid-2-end" : ""}>
               <div className="input-group">
                 <label>Insert Image</label>
                 <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
               </div>
-              <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label>Attach Lab File (.pkt, .ipynb)</label>
-                <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
-                <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
-              </div>
+              {role === 'admin' && (
+                <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label>Attach Lab File (.pkt, .ipynb)</label>
+                  <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
+                  <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+                </div>
+              )}
             </div>
             {!isLabPost && (
               <div className="input-group" data-color-mode="dark">
