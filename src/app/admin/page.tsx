@@ -1,132 +1,208 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState("");
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+
+  // Quiz Creation State
+  const [quizTitle, setQuizTitle] = useState("");
+  const [quizDesc, setQuizDesc] = useState("");
+  
+  // Question Creation State
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [selectedQuiz, setSelectedQuiz] = useState("");
+  const [questionText, setQuestionText] = useState("");
+  const [optA, setOptA] = useState("");
+  const [optB, setOptB] = useState("");
+  const [optC, setOptC] = useState("");
+  const [optD, setOptD] = useState("");
+  const [correctAnswer, setCorrectAnswer] = useState("A");
+
+  // Live Results State
+  const [results, setResults] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchQuizzes();
+      fetchResults();
+    }
+  }, [isLoggedIn]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username === "admin" && password === "admin123") {
       setIsLoggedIn(true);
       setError("");
-      fetchLogs();
     } else {
       setError("Invalid admin credentials.");
     }
   };
 
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/logs");
-      if (res.ok) {
-        const data = await res.json();
-        setLogs(data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch logs", err);
-    } finally {
-      setLoading(false);
+  const fetchQuizzes = async () => {
+    const { data } = await supabase.from('quizzes').select('*');
+    if (data) setQuizzes(data);
+  };
+
+  const fetchResults = async () => {
+    const { data } = await supabase
+      .from('quiz_results')
+      .select('*, profiles(full_name, email), quizzes(title)')
+      .order('created_at', { ascending: false });
+    if (data) setResults(data);
+  };
+
+  const createQuiz = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.from('quizzes').insert([{ title: quizTitle, description: quizDesc }]);
+    if (!error) {
+      alert("Quiz created!");
+      setQuizTitle("");
+      setQuizDesc("");
+      fetchQuizzes();
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert("Copied to clipboard!");
+  const addQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedQuiz) return alert("Select a quiz first!");
+
+    const options = [optA, optB, optC, optD];
+    // Map A, B, C, D to the actual text value
+    let correctText = optA;
+    if (correctAnswer === "B") correctText = optB;
+    if (correctAnswer === "C") correctText = optC;
+    if (correctAnswer === "D") correctText = optD;
+
+    const { error } = await supabase.from('questions').insert([{
+      quiz_id: selectedQuiz,
+      question_text: questionText,
+      options: options,
+      correct_answer: correctText
+    }]);
+
+    if (!error) {
+      alert("Question added!");
+      setQuestionText("");
+      setOptA(""); setOptB(""); setOptC(""); setOptD("");
+    } else {
+      alert("Error adding question");
+    }
   };
 
   if (!isLoggedIn) {
     return (
-      <>
-        <div className="orb orb-1"></div>
-        <div className="orb orb-2"></div>
-        <main className="glass-panel" style={{ maxWidth: '400px' }}>
-          <h1>Admin Access</h1>
-          <p className="subtitle">Restricted Area</p>
-          <form onSubmit={handleLogin}>
-            <div className="input-group">
-              <label>Username</label>
-              <input 
-                type="text" 
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-              />
-            </div>
-            <div className="input-group">
-              <label>Password</label>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-              />
-            </div>
-            {error && <p className="error-text" style={{ marginBottom: '1rem' }}>{error}</p>}
-            <button type="submit" className="primary">Login</button>
-          </form>
-        </main>
-      </>
+      <main className="glass-panel" style={{ maxWidth: '400px', margin: '10vh auto' }}>
+        <h1>Master Admin Access</h1>
+        <p className="subtitle">NETCAD Restricted Area</p>
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <label>Username</label>
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} />
+          </div>
+          <div className="input-group">
+            <label>Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+          </div>
+          {error && <p className="error-text" style={{ marginBottom: '1rem' }}>{error}</p>}
+          <button type="submit" className="primary" style={{ width: '100%', marginTop: '1rem' }}>Login</button>
+        </form>
+      </main>
     );
   }
 
   return (
-    <>
-      <div className="orb orb-1"></div>
-      <div className="orb orb-2"></div>
-      <main className="glass-panel" style={{ maxWidth: '1000px', width: '95%' }}>
-        <h1>Encryption Logs (Audit Only)</h1>
-        <p className="subtitle">All intercepted user payloads (Passwords are not tracked)</p>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <button className="copy-btn" onClick={fetchLogs}>
-            Refresh Logs
-          </button>
-          <button className="copy-btn" onClick={() => setIsLoggedIn(false)} style={{ borderColor: 'var(--error)', color: 'var(--error)' }}>
-            Logout
-          </button>
-        </div>
+    <main className="glass-panel" style={{ maxWidth: '1000px', width: '95%', margin: '4rem auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>NETCAD Admin Control Center</h1>
+        <button className="primary" onClick={() => setIsLoggedIn(false)} style={{ background: 'var(--error)' }}>Logout</button>
+      </div>
 
-        {loading ? (
-          <p style={{ textAlign: 'center' }}>Loading...</p>
-        ) : logs.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>No logs found in database.json.</p>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                  <th style={{ padding: '1rem' }}>Timestamp</th>
-                  <th style={{ padding: '1rem' }}>Encrypted Payload</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <tr key={log.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                    <td style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                      {new Date(log.timestamp).toLocaleString()}
-                    </td>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.8rem', background: 'rgba(0,0,0,0.3)', padding: '0.5rem', borderRadius: '4px' }}>
-                          {log.encryptedData}
-                        </div>
-                        <button className="copy-btn" style={{ margin: 0, padding: '0.25rem 0.5rem' }} onClick={() => copyToClipboard(log.encryptedData)}>
-                          Copy
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
-    </>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+        
+        {/* Create Quiz Section */}
+        <section className="content-section" style={{ margin: 0 }}>
+          <h2>1. Create a New Quiz</h2>
+          <form onSubmit={createQuiz}>
+            <div className="input-group">
+              <label>Quiz Title</label>
+              <input type="text" value={quizTitle} onChange={e => setQuizTitle(e.target.value)} required />
+            </div>
+            <div className="input-group">
+              <label>Description</label>
+              <input type="text" value={quizDesc} onChange={e => setQuizDesc(e.target.value)} required />
+            </div>
+            <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Create Quiz</button>
+          </form>
+        </section>
+
+        {/* Add Questions Section */}
+        <section className="content-section" style={{ margin: 0 }}>
+          <h2>2. Add Questions to Quiz</h2>
+          <form onSubmit={addQuestion}>
+            <div className="input-group">
+              <label>Select Quiz</label>
+              <select value={selectedQuiz} onChange={e => setSelectedQuiz(e.target.value)} required style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--glass-border)' }}>
+                <option value="">-- Choose Quiz --</option>
+                {quizzes.map(q => <option key={q.id} value={q.id}>{q.title}</option>)}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Question Text</label>
+              <input type="text" value={questionText} onChange={e => setQuestionText(e.target.value)} required />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <input type="text" placeholder="Option A" value={optA} onChange={e => setOptA(e.target.value)} required />
+              <input type="text" placeholder="Option B" value={optB} onChange={e => setOptB(e.target.value)} required />
+              <input type="text" placeholder="Option C" value={optC} onChange={e => setOptC(e.target.value)} required />
+              <input type="text" placeholder="Option D" value={optD} onChange={e => setOptD(e.target.value)} required />
+            </div>
+            <div className="input-group" style={{ marginTop: '1rem' }}>
+              <label>Correct Answer</label>
+              <select value={correctAnswer} onChange={e => setCorrectAnswer(e.target.value)} style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--glass-border)' }}>
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+              </select>
+            </div>
+            <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Add Question</button>
+          </form>
+        </section>
+
+      </div>
+
+      {/* Live Results Section */}
+      <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2>Live Quiz Results</h2>
+          <button className="primary" onClick={fetchResults}>Refresh Results</button>
+        </div>
+        <table style={{ width: '100%', marginTop: '1rem', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
+              <th style={{ padding: '1rem' }}>User Email</th>
+              <th style={{ padding: '1rem' }}>Quiz Taken</th>
+              <th style={{ padding: '1rem' }}>Score</th>
+              <th style={{ padding: '1rem' }}>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((r, i) => (
+              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <td style={{ padding: '1rem' }}>{r.profiles?.email || 'Anonymous'}</td>
+                <td style={{ padding: '1rem' }}>{r.quizzes?.title}</td>
+                <td style={{ padding: '1rem', color: 'var(--accent)', fontWeight: 'bold' }}>{r.score}</td>
+                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{new Date(r.created_at).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </main>
   );
 }
