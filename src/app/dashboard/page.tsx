@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<string>('publisher');
   const [loading, setLoading] = useState(true);
+  const [userArticles, setUserArticles] = useState<any[]>([]);
 
   // Article State
   const [title, setTitle] = useState('');
@@ -43,6 +44,14 @@ export default function Dashboard() {
         .single();
         
       if (data) setRole(data.role);
+
+      const { data: myArticles } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('author_id', session.user.id)
+        .order('created_at', { ascending: false });
+      if (myArticles) setUserArticles(myArticles);
+
       setLoading(false);
     };
     fetchUser();
@@ -223,6 +232,49 @@ export default function Dashboard() {
               {isPublishing ? 'Publishing...' : 'Publish Article'}
             </button>
           </form>
+        </section>
+
+        <section style={{ marginBottom: '3rem', borderTop: '1px solid var(--glass-border)', paddingTop: '2rem' }}>
+          <h2>My Submissions</h2>
+          <p className="subtitle" style={{ textAlign: 'left', marginBottom: '1rem' }}>Track the status of your published and pending content.</p>
+          {userArticles.length === 0 ? (
+            <p>You haven't submitted anything yet.</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '1rem' }}>Title</th>
+                    <th style={{ padding: '1rem' }}>Type</th>
+                    <th style={{ padding: '1rem' }}>Status</th>
+                    <th style={{ padding: '1rem' }}>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userArticles.map(art => (
+                    <tr key={art.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <td style={{ padding: '1rem', color: 'var(--text-primary)' }}>{art.title}</td>
+                      <td style={{ padding: '1rem' }}>{art.is_lab ? 'Lab' : 'Article'}</td>
+                      <td style={{ padding: '1rem' }}>
+                        <span style={{ 
+                          padding: '4px 8px', 
+                          borderRadius: '4px', 
+                          fontSize: '0.85rem',
+                          background: art.status === 'published' ? 'rgba(16, 185, 129, 0.2)' : art.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(234, 179, 8, 0.2)',
+                          color: art.status === 'published' ? '#10b981' : art.status === 'rejected' ? '#ef4444' : '#eab308'
+                        }}>
+                          {art.status.toUpperCase()}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        {new Date(art.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
 
         {role === 'admin' && (
