@@ -105,6 +105,28 @@ export default function Dashboard() {
     setIsPublishing(false);
   };
 
+  const uploadLabFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishing(true);
+    setMessage("Uploading lab file...");
+    
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    
+    const { error } = await supabase.storage
+      .from('labs')
+      .upload(fileName, file);
+      
+    if (error) {
+      setMessage("Error uploading lab: " + error.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
+      setContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${file.name}</a>\n\n`);
+      setMessage("Lab file uploaded and injected into article!");
+    }
+    setIsPublishing(false);
+  };
+
   const createQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quizTitle) return alert("Title required");
@@ -145,9 +167,15 @@ export default function Dashboard() {
               <label>YouTube Video URL or ID (Optional)</label>
               <input type="text" value={youtubeId} onChange={e => setYoutubeId(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
             </div>
-            <div className="input-group">
-              <label>Insert Image into Article (Uploads automatically)</label>
-              <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="input-group">
+                <label>Insert Image</label>
+                <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+              </div>
+              <div className="input-group">
+                <label>Attach Lab File (.pkt, .ipynb)</label>
+                <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+              </div>
             </div>
             <div className="input-group" data-color-mode="dark">
               <label>Article Content (Use the toolbar to add tables and format text!)</label>
