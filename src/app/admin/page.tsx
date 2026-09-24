@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import dynamic from "next/dynamic";
+import rehypeRaw from "rehype-raw";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function AdminDashboard() {
@@ -305,6 +306,9 @@ export default function AdminDashboard() {
               value={articleContent} 
               onChange={val => setArticleContent(val || '')} 
               style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+              previewOptions={{
+                rehypePlugins: [[rehypeRaw]]
+              }}
             />
           </div>
           {articleMessage && <p style={{ color: articleMessage.includes('Error') ? 'var(--error)' : 'var(--accent)', marginBottom: '1rem' }}>{articleMessage}</p>}

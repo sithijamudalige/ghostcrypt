@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
@@ -55,6 +56,7 @@ export default function ArticleView() {
 
         <section className="content-section article-content" style={{ background: 'transparent', border: 'none', padding: 0, marginTop: '2rem', lineHeight: 1.8 }}>
           <ReactMarkdown
+            rehypePlugins={[rehypeRaw]}
             components={{
               img: ({node, ...props}) => <img style={{maxWidth: '100%', height: 'auto', borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'}} {...props} />,
               p: ({node, ...props}) => <p style={{marginBottom: '1rem'}} {...props} />,

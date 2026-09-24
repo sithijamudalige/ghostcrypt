@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import rehypeRaw from 'rehype-raw';
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 export default function Dashboard() {
@@ -154,6 +155,9 @@ export default function Dashboard() {
                 value={content} 
                 onChange={val => setContent(val || '')} 
                 style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+                previewOptions={{
+                  rehypePlugins: [[rehypeRaw]]
+                }}
               />
             </div>
             {message && <p style={{ color: message.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{message}</p>}
