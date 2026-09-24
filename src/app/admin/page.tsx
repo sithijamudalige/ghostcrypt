@@ -23,6 +23,13 @@ export default function AdminDashboard() {
   const [optD, setOptD] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("A");
 
+  // Article Creation State
+  const [articleTitle, setArticleTitle] = useState("");
+  const [articleContent, setArticleContent] = useState("");
+  const [articleYoutube, setArticleYoutube] = useState("");
+  const [isPublishingArticle, setIsPublishingArticle] = useState(false);
+  const [articleMessage, setArticleMessage] = useState("");
+
   // Live Results State
   const [results, setResults] = useState<any[]>([]);
 
@@ -72,7 +79,6 @@ export default function AdminDashboard() {
     if (!selectedQuiz) return alert("Select a quiz first!");
 
     const options = [optA, optB, optC, optD];
-    // Map A, B, C, D to the actual text value
     let correctText = optA;
     if (correctAnswer === "B") correctText = optB;
     if (correctAnswer === "C") correctText = optC;
@@ -91,6 +97,59 @@ export default function AdminDashboard() {
       setOptA(""); setOptB(""); setOptC(""); setOptD("");
     } else {
       alert("Error adding question");
+    }
+  };
+
+  const uploadArticleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishingArticle(true);
+    setArticleMessage("Uploading image to secure storage...");
+    
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    
+    const { error } = await supabase.storage
+      .from('article_images')
+      .upload(fileName, file);
+      
+    if (error) {
+      setArticleMessage("Error uploading image: " + error.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from('article_images').getPublicUrl(fileName);
+      setArticleContent(prev => prev + `\n\n![Embedded Image](${publicUrl})\n\n`);
+      setArticleMessage("Image uploaded and injected into your article!");
+    }
+    setIsPublishingArticle(false);
+  };
+
+  const publishAdminArticle = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!articleTitle || !articleContent) return alert("Title and content are required");
+    setIsPublishingArticle(true);
+    
+    let finalYoutubeId = articleYoutube;
+    if (articleYoutube.includes('v=')) {
+      finalYoutubeId = articleYoutube.split('v=')[1].split('&')[0];
+    } else if (articleYoutube.includes('youtu.be/')) {
+      finalYoutubeId = articleYoutube.split('youtu.be/')[1].split('?')[0];
+    }
+
+    const { error } = await supabase.from('articles').insert([{
+      title: articleTitle,
+      content: articleContent,
+      youtube_id: finalYoutubeId
+      // author_id is omitted. Requires the SQL unlock script to work.
+    }]);
+
+    setIsPublishingArticle(false);
+    if (error) {
+      setArticleMessage("Database Error: " + error.message + " (Did you run the unlock SQL script?)");
+    } else {
+      setArticleMessage("Article published successfully as Admin!");
+      setArticleTitle('');
+      setArticleContent('');
+      setArticleYoutube('');
     }
   };
 
@@ -173,8 +232,34 @@ export default function AdminDashboard() {
             <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Add Question</button>
           </form>
         </section>
-
       </div>
+
+      {/* Admin Article Publisher */}
+      <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>
+        <h2>Publish Article as Admin</h2>
+        <form onSubmit={publishAdminArticle}>
+          <div className="input-group">
+            <label>Article Title</label>
+            <input type="text" value={articleTitle} onChange={e => setArticleTitle(e.target.value)} required />
+          </div>
+          <div className="input-group">
+            <label>YouTube Embed Link (Optional)</label>
+            <input type="text" value={articleYoutube} onChange={e => setArticleYoutube(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
+          </div>
+          <div className="input-group">
+            <label>Insert Image into Article (Uploads automatically)</label>
+            <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
+          </div>
+          <div className="input-group">
+            <label>Article Content (Markdown Supported)</label>
+            <textarea value={articleContent} onChange={e => setArticleContent(e.target.value)} required rows={10} placeholder="Write your article here..."></textarea>
+          </div>
+          {articleMessage && <p style={{ color: articleMessage.includes('Error') ? 'var(--error)' : 'var(--accent)', marginBottom: '1rem' }}>{articleMessage}</p>}
+          <button type="submit" className="primary" disabled={isPublishingArticle}>
+            {isPublishingArticle ? 'Publishing...' : 'Publish Article'}
+          </button>
+        </form>
+      </section>
 
       {/* Live Results Section */}
       <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>
