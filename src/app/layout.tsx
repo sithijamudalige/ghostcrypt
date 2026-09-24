@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NEDCAD - Tech & Cybersecurity Portal",
+  title: "NETCAD - Tech & Cybersecurity Portal",
   description: "Community-driven tech insights, cybersecurity tools, and interactive learning.",
 };
 

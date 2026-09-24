@@ -23,8 +23,10 @@ export default function BlogIndex() {
   return (
     <>
       <main className="glass-panel legal-panel" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
-        <h1 style={{ marginTop: '1rem' }}>NEDCAD Community Articles</h1>
-        <p className="subtitle">Latest insights published by our community</p>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <img src="/netcad-logo.jpg" alt="NETCAD Solutions Technologies" style={{ maxWidth: '100%', height: 'auto', borderRadius: '12px', boxShadow: '0 0 30px rgba(0, 229, 255, 0.2)' }} />
+        </div>
+        <p className="subtitle" style={{ fontSize: '1.2rem', marginTop: '-1rem' }}>Latest insights published by our community</p>
         
         {loading ? (
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading articles...</p>
@@ -49,7 +51,7 @@ export default function BlogIndex() {
       </main>
 
       <footer style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', zIndex: 10, paddingBottom: '2rem' }}>
-        <p>&copy; {new Date().getFullYear()} Developed and All Rights Reserved by NEDCAD.</p>
+        <p>&copy; {new Date().getFullYear()} Developed and All Rights Reserved by NETCAD.</p>
         <div style={{ marginTop: '0.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <a href="/login" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>Login / Dashboard</a>
           <a href="/quizzes" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Quizzes</a>
