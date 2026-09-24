@@ -65,6 +65,22 @@ export default function AdminDashboard() {
     if (data) setQuizzes(data);
   };
 
+  const deleteQuiz = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this quiz? This will also delete all its questions!")) return;
+    await supabase.from('quizzes').delete().eq('id', id);
+    fetchQuizzes();
+  };
+  
+  const editQuiz = async (quiz: any) => {
+    const newTitle = prompt("Enter new Quiz Title:", quiz.title);
+    if (newTitle === null) return;
+    const newDesc = prompt("Enter new Description:", quiz.description || "");
+    if (newDesc === null) return;
+    
+    await supabase.from('quizzes').update({ title: newTitle, description: newDesc }).eq('id', quiz.id);
+    fetchQuizzes();
+  };
+
   const fetchResults = async () => {
     const { data } = await supabase
       .from('quiz_results')
@@ -318,6 +334,38 @@ export default function AdminDashboard() {
             </div>
             <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Add Question</button>
           </form>
+        </section>
+
+        {/* Manage Quizzes Section */}
+        <section className="content-section" style={{ margin: 0, gridColumn: '1 / -1' }}>
+          <h2>3. Manage Quizzes</h2>
+          {quizzes.length === 0 ? (
+            <p>No quizzes created yet.</p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '1rem' }}>Quiz Title</th>
+                    <th style={{ padding: '1rem' }}>Description</th>
+                    <th style={{ padding: '1rem' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {quizzes.map(quiz => (
+                    <tr key={quiz.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <td style={{ padding: '1rem', color: 'var(--text-primary)' }}>{quiz.title}</td>
+                      <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{quiz.description}</td>
+                      <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
+                        <button onClick={() => editQuiz(quiz)} className="copy-btn" style={{ margin: 0, borderColor: 'var(--accent)', color: 'var(--accent)' }}>Edit</button>
+                        <button onClick={() => deleteQuiz(quiz.id)} className="copy-btn" style={{ margin: 0, borderColor: 'var(--error)', color: 'var(--error)' }}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       </div>
 
