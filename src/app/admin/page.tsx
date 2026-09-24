@@ -270,7 +270,7 @@ export default function AdminDashboard() {
         <button className="primary" onClick={() => setIsLoggedIn(false)} style={{ background: 'var(--error)' }}>Logout</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+      <div className="responsive-grid-2" style={{ marginTop: '2rem' }}>
         
         {/* Create Quiz Section */}
         <section className="content-section" style={{ margin: 0 }}>
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
               <label>Question Text</label>
               <input type="text" value={questionText} onChange={e => setQuestionText(e.target.value)} required />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            <div className="responsive-grid-2-sm">
               <input type="text" placeholder="Option A" value={optA} onChange={e => setOptA(e.target.value)} required />
               <input type="text" placeholder="Option B" value={optB} onChange={e => setOptB(e.target.value)} required />
               <input type="text" placeholder="Option C" value={optC} onChange={e => setOptC(e.target.value)} required />
@@ -350,7 +350,7 @@ export default function AdminDashboard() {
             <label>YouTube Embed Link (Optional)</label>
             <input type="text" value={articleYoutube} onChange={e => setArticleYoutube(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'end' }}>
+          <div className="responsive-grid-2-end">
             <div className="input-group">
               <label>Insert Image</label>
               <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
