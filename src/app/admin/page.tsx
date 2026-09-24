@@ -30,6 +30,7 @@ export default function AdminDashboard() {
   const [articleTitle, setArticleTitle] = useState("");
   const [articleContent, setArticleContent] = useState("");
   const [articleYoutube, setArticleYoutube] = useState("");
+  const [labName, setLabName] = useState("");
   const [isPublishingArticle, setIsPublishingArticle] = useState(false);
   const [articleMessage, setArticleMessage] = useState("");
   
@@ -171,7 +172,8 @@ export default function AdminDashboard() {
       setArticleMessage("Error uploading lab: " + error.message);
     } else {
       const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
-      setArticleContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${file.name}</a>\n\n`);
+      const displayName = labName.trim() !== '' ? labName : file.name;
+      setArticleContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${displayName}</a>\n\n`);
       setArticleMessage("Lab file uploaded and injected into article!");
     }
     setIsPublishingArticle(false);
@@ -318,13 +320,14 @@ export default function AdminDashboard() {
             <label>YouTube Embed Link (Optional)</label>
             <input type="text" value={articleYoutube} onChange={e => setArticleYoutube(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'end' }}>
             <div className="input-group">
               <label>Insert Image</label>
               <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
             </div>
-            <div className="input-group">
+            <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <label>Attach Lab File (.pkt, .ipynb)</label>
+              <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
               <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
             </div>
           </div>

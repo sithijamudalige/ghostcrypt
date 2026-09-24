@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [youtubeId, setYoutubeId] = useState('');
+  const [labName, setLabName] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -121,7 +122,8 @@ export default function Dashboard() {
       setMessage("Error uploading lab: " + error.message);
     } else {
       const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
-      setContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${file.name}</a>\n\n`);
+      const displayName = labName.trim() !== '' ? labName : file.name;
+      setContent(prev => prev + `\n\n<a href="${publicUrl}" target="_blank" class="lab-download-btn">⬇️ Download Lab: ${displayName}</a>\n\n`);
       setMessage("Lab file uploaded and injected into article!");
     }
     setIsPublishing(false);
@@ -167,13 +169,14 @@ export default function Dashboard() {
               <label>YouTube Video URL or ID (Optional)</label>
               <input type="text" value={youtubeId} onChange={e => setYoutubeId(e.target.value)} placeholder="e.g. dQw4w9WgXcQ" />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'end' }}>
               <div className="input-group">
                 <label>Insert Image</label>
                 <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
               </div>
-              <div className="input-group">
+              <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label>Attach Lab File (.pkt, .ipynb)</label>
+                <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
                 <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
               </div>
             </div>
