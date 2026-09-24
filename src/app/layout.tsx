@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
+import CookieBanner from "@/components/CookieBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,10 +43,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/labs" style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Labs</Link>
             <Link href="/quizzes">Quizzes</Link>
             <Link href="/encrypt">GhostCrypt</Link>
+            <Link href="/about">About</Link>
+            <Link href="/contact">Contact</Link>
             <Link href="/login" style={{ color: 'var(--accent)' }}>Dashboard</Link>
           </div>
         </nav>
         {children}
+        <CookieBanner />
       </body>
     </html>
   );
