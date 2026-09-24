@@ -13,6 +13,7 @@ export default function BlogIndex() {
         .from('articles')
         .select('*, profiles(full_name, email)')
         .eq('status', 'published')
+        .eq('is_lab', false)
         .order('created_at', { ascending: false });
       
       if (data) setArticles(data);

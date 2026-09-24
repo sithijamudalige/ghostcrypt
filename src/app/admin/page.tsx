@@ -31,6 +31,7 @@ export default function AdminDashboard() {
   const [articleContent, setArticleContent] = useState("");
   const [articleYoutube, setArticleYoutube] = useState("");
   const [labName, setLabName] = useState("");
+  const [isLabPost, setIsLabPost] = useState(false);
   const [isPublishingArticle, setIsPublishingArticle] = useState(false);
   const [articleMessage, setArticleMessage] = useState("");
   
@@ -213,14 +214,15 @@ export default function AdminDashboard() {
         title: articleTitle,
         content: articleContent,
         youtube_id: finalYoutubeId,
-        status: 'published' // Admin posts auto-publish
+        status: 'published',
+        is_lab: isLabPost
       }]);
 
       setIsPublishingArticle(false);
       if (error) {
-        setArticleMessage("Database Error: " + error.message + " (Did you run the unlock SQL script?)");
+        setArticleMessage("Database Error: " + error.message + " (Did you run the SQL script?)");
       } else {
-        setArticleMessage("Article published successfully as Admin!");
+        setArticleMessage("Post published successfully as Admin!");
         setArticleTitle(''); setArticleContent(''); setArticleYoutube('');
         fetchAllArticles();
       }
@@ -308,12 +310,30 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      {/* Admin Article Publisher */}
+      {/* Admin Post Publisher */}
       <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>
-        <h2>Publish Article as Admin</h2>
+        <h2>Publish New Content as Admin</h2>
         <form onSubmit={publishAdminArticle}>
+          
+          <div className="input-group" style={{ marginBottom: '1.5rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+            <label style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1rem' }}>Content Type</label>
+            <div style={{ display: 'flex', gap: '2rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                <input type="radio" checked={!isLabPost} onChange={() => setIsLabPost(false)} style={{ width: '20px', height: '20px' }} /> 
+                Standard Article
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                <input type="radio" checked={isLabPost} onChange={() => setIsLabPost(true)} style={{ width: '20px', height: '20px' }} /> 
+                Hands-On Lab
+              </label>
+            </div>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              {isLabPost ? "This will be published to the dedicated /labs page." : "This will be published to the main Articles homepage."}
+            </p>
+          </div>
+
           <div className="input-group">
-            <label>Article Title</label>
+            <label>{isLabPost ? 'Lab Title' : 'Article Title'}</label>
             <input type="text" value={articleTitle} onChange={e => setArticleTitle(e.target.value)} required />
           </div>
           <div className="input-group">

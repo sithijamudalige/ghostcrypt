@@ -13,7 +13,7 @@ export default function LabsIndex() {
         .from('articles')
         .select('*, profiles(full_name, email)')
         .eq('status', 'published')
-        .like('content', '%lab-download-btn%')
+        .eq('is_lab', true)
         .order('created_at', { ascending: false });
       
       if (data) setArticles(data);

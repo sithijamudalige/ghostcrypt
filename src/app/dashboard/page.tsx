@@ -19,6 +19,7 @@ export default function Dashboard() {
   const [content, setContent] = useState('');
   const [youtubeId, setYoutubeId] = useState('');
   const [labName, setLabName] = useState('');
+  const [isLabPost, setIsLabPost] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -69,7 +70,8 @@ export default function Dashboard() {
       title,
       content,
       youtube_id: finalYoutubeId,
-      author_id: user.id
+      author_id: user.id,
+      is_lab: isLabPost
     }]);
 
     setIsPublishing(false);
@@ -159,10 +161,25 @@ export default function Dashboard() {
         </div>
 
         <section style={{ marginBottom: '3rem' }}>
-          <h2>Publish New Article</h2>
+          <h2>Publish New Content</h2>
           <form onSubmit={publishArticle} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            
+            <div className="input-group" style={{ marginBottom: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+              <label style={{ color: 'var(--accent)', fontSize: '1.1rem', marginBottom: '1rem' }}>Content Type</label>
+              <div style={{ display: 'flex', gap: '2rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                  <input type="radio" checked={!isLabPost} onChange={() => setIsLabPost(false)} style={{ width: '20px', height: '20px' }} /> 
+                  Standard Article
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '1.1rem' }}>
+                  <input type="radio" checked={isLabPost} onChange={() => setIsLabPost(true)} style={{ width: '20px', height: '20px' }} /> 
+                  Hands-On Lab
+                </label>
+              </div>
+            </div>
+
             <div className="input-group">
-              <label>Article Title</label>
+              <label>{isLabPost ? 'Lab Title' : 'Article Title'}</label>
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g. How to use AES Encryption" />
             </div>
             <div className="input-group">
