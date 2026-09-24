@@ -383,8 +383,8 @@ button:disabled {
 
 .lab-download-btn {
   display: inline-block;
-  background: var(--accent);
-  color: #000;
+  background: var(--accent) !important;
+  color: #000000 !important;
   padding: 10px 20px;
   text-decoration: none;
   font-weight: bold;
