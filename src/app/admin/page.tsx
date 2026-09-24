@@ -335,7 +335,13 @@ export default function AdminDashboard() {
               onChange={val => setArticleContent(val || '')} 
               style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
               previewOptions={{
-                rehypePlugins: [[rehypeRaw]]
+                rehypePlugins: [[rehypeRaw]],
+                components: {
+                  style: ({node, ...props}: any) => <style dangerouslySetInnerHTML={{ __html: props.children }} />,
+                  head: () => <></>,
+                  title: () => <></>,
+                  meta: () => <></>
+                }
               }}
             />
           </div>

@@ -61,8 +61,8 @@ export default function ArticleView() {
               head: () => <></>,
               title: () => <></>,
               meta: () => <></>,
-              style: ({node, ...props}) => {
-                return <style {...props} />;
+              style: ({node, ...props}: any) => {
+                return <style dangerouslySetInnerHTML={{ __html: props.children }} />;
               },
               pre: ({node, ...props}) => (
                 <pre style={{ 
