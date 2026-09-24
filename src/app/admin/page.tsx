@@ -113,9 +113,10 @@ export default function AdminDashboard() {
     if (!selectedQuiz) return alert("Enter Quiz Title!");
 
     let quizId = selectedQuiz;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(selectedQuiz);
     
     // If it doesn't look like a UUID, search for the quiz by title
-    if (!selectedQuiz.includes('-')) {
+    if (!isUUID) {
       const { data: qData, error: qErr } = await supabase.from('quizzes').select('id').ilike('title', selectedQuiz).single();
       if (qErr || !qData) {
         return alert("Could not find a Quiz with that title! Please make sure the title exactly matches.");

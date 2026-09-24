@@ -45,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/encrypt">GhostCrypt</Link>
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
-            <Link href="/login" style={{ color: 'var(--accent)' }}>Dashboard</Link>
+            <Link href="/login" style={{ color: 'var(--accent)' }}>Login / Dashboard</Link>
           </div>
         </nav>
         {children}
