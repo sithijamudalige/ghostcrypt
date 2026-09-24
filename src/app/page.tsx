@@ -23,10 +23,7 @@ export default function BlogIndex() {
   return (
     <>
       <main className="glass-panel legal-panel" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <img src="/netcad-logo.jpg" alt="NETCAD Solutions Technologies" style={{ maxWidth: '100%', height: 'auto', borderRadius: '12px', boxShadow: '0 0 30px rgba(0, 229, 255, 0.2)' }} />
-        </div>
-        <p className="subtitle" style={{ fontSize: '1.2rem', marginTop: '-1rem' }}>Latest insights published by our community</p>
+        <p className="subtitle" style={{ fontSize: '1.2rem' }}>Latest insights published by our community</p>
         
         {loading ? (
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading articles...</p>

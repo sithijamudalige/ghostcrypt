@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -30,7 +31,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           strategy="afterInteractive"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <nav className="navbar">
+          <Link href="/" className="navbar-logo">
+            <img src="/netcad-logo.jpg" alt="NETCAD Logo" style={{ height: '40px', borderRadius: '6px' }} />
+            NETCAD
+          </Link>
+          <div className="navbar-links">
+            <Link href="/">Articles</Link>
+            <Link href="/quizzes">Quizzes</Link>
+            <Link href="/encrypt">GhostCrypt</Link>
+            <Link href="/login" style={{ color: 'var(--accent)' }}>Dashboard</Link>
+          </div>
+        </nav>
+        {children}
+      </body>
     </html>
   );
 }
