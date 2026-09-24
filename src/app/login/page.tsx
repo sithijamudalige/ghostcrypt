@@ -19,6 +19,9 @@ export default function Login() {
   }, [router]);
 
   const handleGoogleLogin = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('is_logging_in', 'true');
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
