@@ -61,17 +61,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', background: 'rgba(0,0,0,0.3)', padding: '1rem 2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '1rem', marginBottom: '2rem', background: 'rgba(0,0,0,0.3)', padding: '1.5rem 2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+        
+        {/* Left */}
+        <div>
           <h2 style={{ margin: 0, color: 'var(--accent)' }}>Admin Portal</h2>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <Link href="/admin" style={{ color: pathname === '/admin' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600 }}>Overview</Link>
-            <Link href="/admin/articles" style={{ color: pathname === '/admin/articles' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600 }}>Articles</Link>
-            <Link href="/admin/quizzes" style={{ color: pathname === '/admin/quizzes' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600 }}>Quizzes</Link>
-            <Link href="/admin/results" style={{ color: pathname === '/admin/results' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600 }}>Results</Link>
-          </div>
         </div>
-        <button onClick={handleLogout} className="copy-btn" style={{ borderColor: 'var(--error)', color: 'var(--error)' }}>Logout Admin</button>
+
+        {/* Center */}
+        <div style={{ display: 'flex', gap: '3rem', justifyContent: 'center' }}>
+          <Link href="/admin" style={{ color: pathname === '/admin' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>Overview</Link>
+          <Link href="/admin/articles" style={{ color: pathname === '/admin/articles' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>Articles</Link>
+          <Link href="/admin/quizzes" style={{ color: pathname === '/admin/quizzes' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>Quizzes</Link>
+          <Link href="/admin/results" style={{ color: pathname === '/admin/results' ? 'var(--text-primary)' : 'var(--text-secondary)', textDecoration: 'none', fontWeight: 600, fontSize: '1.1rem' }}>Results</Link>
+        </div>
+
+        {/* Right */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={handleLogout} className="copy-btn" style={{ margin: 0, borderColor: 'var(--error)', color: 'var(--error)' }}>Logout Admin</button>
+        </div>
+
       </div>
 
       {children}
