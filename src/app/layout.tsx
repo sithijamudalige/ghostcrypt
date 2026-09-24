@@ -46,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/login" style={{ color: 'var(--accent)' }}>Login / Dashboard</Link>
+            <Link href="/dashboard" className="primary" style={{ padding: '0.4rem 1rem', width: 'auto', borderRadius: '6px', fontSize: '0.9rem', color: '#000', margin: 0, textDecoration: 'none', display: 'inline-block' }}>+ Add Article</Link>
           </div>
         </nav>
         {children}

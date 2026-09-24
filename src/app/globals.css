@@ -246,7 +246,7 @@ textarea:focus {
   color: var(--text-primary);
 }
 
-button.primary {
+.primary {
   width: 100%;
   background: linear-gradient(135deg, #00e5ff, #00b8cc);
   color: #09090b;
@@ -261,12 +261,12 @@ button.primary {
   box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
 }
 
-button.primary:hover {
+.primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 229, 255, 0.4);
 }
 
-button.primary:active {
+.primary:active {
   transform: translateY(0);
 }
 
