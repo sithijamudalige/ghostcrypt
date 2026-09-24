@@ -16,11 +16,13 @@ export default function ContactPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem', background: 'rgba(0,0,0,0.3)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
         
         <div>
-          <h3 style={{ color: 'white', marginBottom: '0.5rem' }}>Email Support</h3>
+          <h3 style={{ color: 'white', marginBottom: '0.5rem' }}>Direct Support</h3>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            For all general inquiries, technical support, or partnership opportunities, please email us directly at:
+            For all general inquiries, technical support, or partnership opportunities, please contact us directly:
+            <br /><br />
+            <strong>Email:</strong> <a href="mailto:sithijamudalige15@gmail.com" style={{ color: 'var(--accent)', fontWeight: 'bold', textDecoration: 'none' }}>sithijamudalige15@gmail.com</a>
             <br />
-            <a href="mailto:support@netcad.company" style={{ color: 'var(--accent)', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block', marginTop: '0.5rem' }}>support@netcad.company</a>
+            <strong>Mobile / WhatsApp:</strong> <a href="tel:0787675866" style={{ color: 'var(--accent)', fontWeight: 'bold', textDecoration: 'none' }}>078 767 5866</a>
           </p>
         </div>
 
