@@ -257,58 +257,7 @@ export default function AdminDashboard() {
         <button className="primary" onClick={() => setIsLoggedIn(false)} style={{ background: 'var(--error)' }}>Logout</button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
-        
-        {/* Create Quiz Section */}
-        <section className="content-section" style={{ margin: 0 }}>
-          <h2>1. Create a New Quiz</h2>
-          <form onSubmit={createQuiz}>
-            <div className="input-group">
-              <label>Quiz Title</label>
-              <input type="text" value={quizTitle} onChange={e => setQuizTitle(e.target.value)} required />
-            </div>
-            <div className="input-group">
-              <label>Description</label>
-              <input type="text" value={quizDesc} onChange={e => setQuizDesc(e.target.value)} required />
-            </div>
-            <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Create Quiz</button>
-          </form>
-        </section>
-
-        {/* Add Questions Section */}
-        <section className="content-section" style={{ margin: 0 }}>
-          <h2>2. Add Questions to Quiz</h2>
-          <form onSubmit={addQuestion}>
-            <div className="input-group">
-              <label>Select Quiz</label>
-              <select value={selectedQuiz} onChange={e => setSelectedQuiz(e.target.value)} required style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--glass-border)' }}>
-                <option value="">-- Choose Quiz --</option>
-                {quizzes.map(q => <option key={q.id} value={q.id}>{q.title}</option>)}
-              </select>
-            </div>
-            <div className="input-group">
-              <label>Question Text</label>
-              <input type="text" value={questionText} onChange={e => setQuestionText(e.target.value)} required />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-              <input type="text" placeholder="Option A" value={optA} onChange={e => setOptA(e.target.value)} required />
-              <input type="text" placeholder="Option B" value={optB} onChange={e => setOptB(e.target.value)} required />
-              <input type="text" placeholder="Option C" value={optC} onChange={e => setOptC(e.target.value)} required />
-              <input type="text" placeholder="Option D" value={optD} onChange={e => setOptD(e.target.value)} required />
-            </div>
-            <div className="input-group" style={{ marginTop: '1rem' }}>
-              <label>Correct Answer</label>
-              <select value={correctAnswer} onChange={e => setCorrectAnswer(e.target.value)} style={{ padding: '0.8rem', borderRadius: '8px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--glass-border)' }}>
-                <option value="A">Option A</option>
-                <option value="B">Option B</option>
-                <option value="C">Option C</option>
-                <option value="D">Option D</option>
-              </select>
-            </div>
-            <button type="submit" className="primary" style={{ marginTop: '1rem' }}>Add Question</button>
-          </form>
-        </section>
-      </div>
+      {/* Quizzes Section Removed per User Request */}
 
       {/* Admin Post Publisher */}
       <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>

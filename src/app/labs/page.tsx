@@ -59,7 +59,7 @@ export default function LabsIndex() {
                     By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
                   </p>
                   <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    {article.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)}...
+                    {article.content.replace(/<div[^>]*>[\s\S]*?⬇️ Download Lab[\s\S]*?<\/div>/gi, '').replace(/<a[^>]*lab-download-btn[^>]*>[\s\S]*?<\/a>/gi, '').replace(/!\[.*?\]\(.*?\)/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)}...
                   </p>
                 </div>
                 <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
