@@ -10,10 +10,12 @@ export default function BlogIndex() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hash.includes('access_token=')) {
-      router.push('/dashboard');
-      return;
-    }
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        router.push('/dashboard');
+      }
+    });
+
     const fetchArticles = async () => {
       const { data, error } = await supabase
         .from('articles')
@@ -26,7 +28,11 @@ export default function BlogIndex() {
       setLoading(false);
     };
     fetchArticles();
-  }, []);
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [router]);
 
   return (
     <>
