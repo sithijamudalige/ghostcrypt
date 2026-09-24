@@ -38,8 +38,8 @@ export default function BlogIndex() {
                 <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                   By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
                 </p>
-                <p style={{ marginTop: '1rem' }}>
-                  {article.content.substring(0, 150)}...
+                <p style={{ marginTop: '1rem', color: 'var(--text-secondary)' }}>
+                  {article.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)}...
                 </p>
                 <Link href={`/blog/${article.id}`} style={{ color: 'var(--accent)' }}>Read Full Article &rarr;</Link>
               </div>
