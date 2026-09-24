@@ -62,11 +62,30 @@ export default function ArticleView() {
               title: () => <></>,
               meta: () => <></>,
               style: ({node, ...props}) => {
-                // Render the style tag so it applies to the page!
                 return <style {...props} />;
               },
+              pre: ({node, ...props}) => (
+                <pre style={{ 
+                  background: 'rgba(0,0,0,0.5)', 
+                  padding: '1rem', 
+                  borderRadius: '8px', 
+                  overflowX: 'auto', 
+                  maxWidth: '100%',
+                  border: '1px solid var(--glass-border)', 
+                  color: '#38bdf8', 
+                  fontFamily: 'Consolas, Monaco, monospace', 
+                  fontSize: '13px', 
+                  lineHeight: '1.45',
+                  marginBottom: '1.5rem' 
+                }} {...props} />
+              ),
+              code: ({node, inline, ...props}: any) => (
+                inline ? 
+                  <code style={{ background: 'rgba(0,0,0,0.3)', padding: '0.2rem 0.4rem', borderRadius: '4px', color: '#38bdf8', fontSize: '0.9rem' }} {...props} /> 
+                  : <code {...props} />
+              ),
               img: ({node, ...props}) => <img style={{maxWidth: '100%', height: 'auto', borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)'}} {...props} />,
-              p: ({node, ...props}) => <p style={{marginBottom: '1rem'}} {...props} />,
+              p: ({node, ...props}) => <p style={{marginBottom: '1rem', maxWidth: '100%', overflowWrap: 'break-word'}} {...props} />,
               a: ({node, ...props}) => <a style={{color: 'var(--accent)'}} target="_blank" {...props} />
             }}
           >
