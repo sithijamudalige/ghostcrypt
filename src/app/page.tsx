@@ -89,11 +89,6 @@ export default function Home() {
                   padding: 0,
                   overflow: 'hidden'
                 }}>
-                  {thumbnailUrl && (
-                    <div style={{ width: '100%', height: '200px', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <img src={thumbnailUrl} alt="Article Thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  )}
                   <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                     <div>
                       <h2 style={{ fontSize: '1.5rem', lineHeight: '1.3', marginBottom: '1rem' }}>
