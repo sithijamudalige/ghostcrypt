@@ -31,6 +31,10 @@ export default function AdminDashboard() {
   const [articleYoutube, setArticleYoutube] = useState("");
   const [isPublishingArticle, setIsPublishingArticle] = useState(false);
   const [articleMessage, setArticleMessage] = useState("");
+  
+  // Article Management State
+  const [allArticles, setAllArticles] = useState<any[]>([]);
+  const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
 
   // Live Results State
   const [results, setResults] = useState<any[]>([]);
@@ -39,6 +43,7 @@ export default function AdminDashboard() {
     if (isLoggedIn) {
       fetchQuizzes();
       fetchResults();
+      fetchAllArticles();
     }
   }, [isLoggedIn]);
 
@@ -63,6 +68,30 @@ export default function AdminDashboard() {
       .select('*, profiles(full_name, email), quizzes(title)')
       .order('created_at', { ascending: false });
     if (data) setResults(data);
+  };
+
+  const fetchAllArticles = async () => {
+    const { data } = await supabase.from('articles').select('*, profiles(email)').order('created_at', { ascending: false });
+    if (data) setAllArticles(data);
+  };
+
+  const deleteArticle = async (id: string) => {
+    if (!confirm("Are you sure you want to permanently delete this article?")) return;
+    await supabase.from('articles').delete().eq('id', id);
+    fetchAllArticles();
+  };
+
+  const updateArticleStatus = async (id: string, newStatus: string) => {
+    await supabase.from('articles').update({ status: newStatus }).eq('id', id);
+    fetchAllArticles();
+  };
+
+  const editArticle = (article: any) => {
+    setEditingArticleId(article.id);
+    setArticleTitle(article.title);
+    setArticleContent(article.content);
+    setArticleYoutube(article.youtube_id || '');
+    window.scrollTo(0, document.body.scrollHeight);
   };
 
   const createQuiz = async (e: React.FormEvent) => {
@@ -137,21 +166,39 @@ export default function AdminDashboard() {
       finalYoutubeId = articleYoutube.split('youtu.be/')[1].split('?')[0];
     }
 
-    const { error } = await supabase.from('articles').insert([{
-      title: articleTitle,
-      content: articleContent,
-      youtube_id: finalYoutubeId
-      // author_id is omitted. Requires the SQL unlock script to work.
-    }]);
+    if (editingArticleId) {
+      const { error } = await supabase.from('articles').update({
+        title: articleTitle,
+        content: articleContent,
+        youtube_id: finalYoutubeId,
+        status: 'published'
+      }).eq('id', editingArticleId);
 
-    setIsPublishingArticle(false);
-    if (error) {
-      setArticleMessage("Database Error: " + error.message + " (Did you run the unlock SQL script?)");
+      setIsPublishingArticle(false);
+      if (error) {
+        setArticleMessage("Database Error: " + error.message);
+      } else {
+        setArticleMessage("Article updated successfully!");
+        setEditingArticleId(null);
+        setArticleTitle(''); setArticleContent(''); setArticleYoutube('');
+        fetchAllArticles();
+      }
     } else {
-      setArticleMessage("Article published successfully as Admin!");
-      setArticleTitle('');
-      setArticleContent('');
-      setArticleYoutube('');
+      const { error } = await supabase.from('articles').insert([{
+        title: articleTitle,
+        content: articleContent,
+        youtube_id: finalYoutubeId,
+        status: 'published' // Admin posts auto-publish
+      }]);
+
+      setIsPublishingArticle(false);
+      if (error) {
+        setArticleMessage("Database Error: " + error.message + " (Did you run the unlock SQL script?)");
+      } else {
+        setArticleMessage("Article published successfully as Admin!");
+        setArticleTitle(''); setArticleContent(''); setArticleYoutube('');
+        fetchAllArticles();
+      }
     }
   };
 
@@ -265,6 +312,50 @@ export default function AdminDashboard() {
             {isPublishingArticle ? 'Publishing...' : 'Publish Article'}
           </button>
         </form>
+      </section>
+
+      {/* Article Management Section */}
+      <section className="content-section" style={{ marginTop: '2rem', width: '100%', maxWidth: 'none' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2>Article Management (Review, Edit, Delete)</h2>
+          <button className="primary" onClick={fetchAllArticles}>Refresh Articles</button>
+        </div>
+        <table style={{ width: '100%', marginTop: '1rem', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
+              <th style={{ padding: '1rem' }}>Title</th>
+              <th style={{ padding: '1rem' }}>Author</th>
+              <th style={{ padding: '1rem' }}>Status</th>
+              <th style={{ padding: '1rem' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allArticles.map((art) => (
+              <tr key={art.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <td style={{ padding: '1rem', fontWeight: 'bold' }}>{art.title}</td>
+                <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{art.profiles?.email || 'Admin'}</td>
+                <td style={{ padding: '1rem' }}>
+                  <span style={{ 
+                    background: art.status === 'published' ? 'var(--success)' : art.status === 'rejected' ? 'var(--error)' : 'orange',
+                    color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem'
+                  }}>
+                    {art.status?.toUpperCase() || 'PUBLISHED'}
+                  </span>
+                </td>
+                <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
+                  {art.status === 'pending' && (
+                    <>
+                      <button className="primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }} onClick={() => updateArticleStatus(art.id, 'published')}>Approve</button>
+                      <button className="primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', background: 'var(--error)' }} onClick={() => updateArticleStatus(art.id, 'rejected')}>Reject</button>
+                    </>
+                  )}
+                  <button className="copy-btn" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', margin: 0 }} onClick={() => editArticle(art)}>Edit</button>
+                  <button className="copy-btn" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', margin: 0, color: 'var(--error)', borderColor: 'var(--error)' }} onClick={() => deleteArticle(art.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
 
       {/* Live Results Section */}

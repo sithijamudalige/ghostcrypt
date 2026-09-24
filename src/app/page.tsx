@@ -12,6 +12,7 @@ export default function BlogIndex() {
       const { data, error } = await supabase
         .from('articles')
         .select('*, profiles(full_name, email)')
+        .eq('status', 'published')
         .order('created_at', { ascending: false });
       
       if (data) setArticles(data);

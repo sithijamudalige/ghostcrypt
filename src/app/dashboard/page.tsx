@@ -74,7 +74,7 @@ export default function Dashboard() {
     if (error) {
       setMessage("Error: " + error.message);
     } else {
-      setMessage("Article published successfully!");
+      setMessage("Article submitted successfully! It is now waiting for Admin approval.");
       setTitle('');
       setContent('');
       setYoutubeId('');
