@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 export default function Dashboard() {
   const router = useRouter();
@@ -146,9 +148,13 @@ export default function Dashboard() {
               <label>Insert Image into Article (Uploads automatically)</label>
               <input type="file" accept="image/*" onChange={uploadImage} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
             </div>
-            <div className="input-group">
-              <label>Article Content (Markdown Supported)</label>
-              <textarea value={content} onChange={e => setContent(e.target.value)} required rows={10} placeholder="Write your article here..."></textarea>
+            <div className="input-group" data-color-mode="dark">
+              <label>Article Content (Use the toolbar to add tables and format text!)</label>
+              <MDEditor 
+                value={content} 
+                onChange={val => setContent(val || '')} 
+                style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+              />
             </div>
             {message && <p style={{ color: message.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{message}</p>}
             <button type="submit" className="primary" disabled={isPublishing}>

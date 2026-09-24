@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import dynamic from "next/dynamic";
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function AdminDashboard() {
   const [username, setUsername] = useState("");
@@ -250,9 +252,13 @@ export default function AdminDashboard() {
             <label>Insert Image into Article (Uploads automatically)</label>
             <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)' }} />
           </div>
-          <div className="input-group">
-            <label>Article Content (Markdown Supported)</label>
-            <textarea value={articleContent} onChange={e => setArticleContent(e.target.value)} required rows={10} placeholder="Write your article here..."></textarea>
+          <div className="input-group" data-color-mode="dark">
+            <label>Article Content (Use the toolbar to add tables and format text!)</label>
+            <MDEditor 
+              value={articleContent} 
+              onChange={val => setArticleContent(val || '')} 
+              style={{ minHeight: '400px', backgroundColor: 'rgba(0,0,0,0.5)' }} 
+            />
           </div>
           {articleMessage && <p style={{ color: articleMessage.includes('Error') ? 'var(--error)' : 'var(--accent)', marginBottom: '1rem' }}>{articleMessage}</p>}
           <button type="submit" className="primary" disabled={isPublishingArticle}>
