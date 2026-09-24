@@ -3,6 +3,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
+import ClientNavbar from "@/components/ClientNavbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,22 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
-        <nav className="navbar">
-          <Link href="/" className="navbar-logo">
-            <img src="/netcad-logo.jpg" alt="NETCAD Logo" style={{ height: '40px', borderRadius: '6px' }} />
-            NETCAD
-          </Link>
-          <div className="navbar-links">
-            <Link href="/">Articles</Link>
-            <Link href="/labs" style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Labs</Link>
-            <Link href="/quizzes">Quizzes</Link>
-            <Link href="/encrypt">GhostCrypt</Link>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/login" style={{ color: 'var(--accent)' }}>Login / Dashboard</Link>
-            <Link href="/dashboard" className="primary" style={{ padding: '0.4rem 1rem', width: 'auto', borderRadius: '6px', fontSize: '0.9rem', color: '#000', margin: 0, textDecoration: 'none', display: 'inline-block' }}>+ Add Article</Link>
-          </div>
-        </nav>
+        <ClientNavbar />
         {children}
         <CookieBanner />
       </body>
