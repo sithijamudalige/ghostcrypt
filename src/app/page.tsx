@@ -1,13 +1,19 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function BlogIndex() {
+  const router = useRouter();
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash.includes('access_token=')) {
+      router.push('/dashboard');
+      return;
+    }
     const fetchArticles = async () => {
       const { data, error } = await supabase
         .from('articles')
