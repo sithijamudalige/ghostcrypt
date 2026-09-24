@@ -57,8 +57,8 @@ export default function BlogIndex() {
                   <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '1rem' }}>
                     By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
                   </p>
-                  <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    {article.content.replace(/<[^>]+>/g, ' ').replace(/⬇️.*?https:\/\/\S+/g, '').replace(/⬇️.*?(?=\s|$)/g, '').replace(/\s+/g, ' ').trim().substring(0, 180)}...
+                  <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6, wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                    {article.content.replace(/<[^>]+>/g, ' ').replace(/(?:⬇️\s*)?Download Lab:.*?https:\/\/\S+/g, '').replace(/(?:⬇️\s*)?Download Lab:.*?(?=\s|$)/g, '').replace(/\s+/g, ' ').trim().substring(0, 180)}...
                   </p>
                 </div>
                 <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
