@@ -28,6 +28,17 @@ export default function ArticleView() {
   if (loading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '5rem' }}>Loading...</div>;
   if (!article) return <div style={{ color: 'white', textAlign: 'center', marginTop: '5rem' }}>Article not found</div>;
 
+  const extractImage = (content: string) => {
+    const mdMatch = content.match(/!\[.*?\]\((.*?)\)/);
+    if (mdMatch) return mdMatch[1];
+    const htmlMatch = content.match(/<img[^>]+src="([^">]+)"/);
+    if (htmlMatch) return htmlMatch[1];
+    return null;
+  };
+  
+  const coverImage = extractImage(article.content);
+  // We don't remove the image from the content so they can still see it in context, but we add it as a banner
+  
   return (
     <>
       <div className="orb orb-1"></div>
@@ -38,8 +49,14 @@ export default function ArticleView() {
           &larr; Back to Home
         </Link>
         
-        <h1>{article.title}</h1>
-        <p className="subtitle">By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}</p>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', lineHeight: '1.2' }}>{article.title}</h1>
+        <p className="subtitle" style={{ marginBottom: '2rem' }}>By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}</p>
+        
+        {coverImage && (
+          <div style={{ marginBottom: '2.5rem', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+            <img src={coverImage} alt="Cover" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          </div>
+        )}
         
         {article.youtube_id && (
           <div style={{ marginTop: '2rem', position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px' }}>
