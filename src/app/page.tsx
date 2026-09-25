@@ -59,7 +59,7 @@ export default function Home() {
       <div className="orb orb-2" style={{ opacity: 0.3 }}></div>
 
       {/* MSN Style Top Header */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
+      <div style={{ width: '100%', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
@@ -67,7 +67,7 @@ export default function Home() {
           borderRadius: '24px', 
           padding: '0.5rem 1.5rem', 
           width: '100%', 
-          maxWidth: '600px',
+          maxWidth: '800px',
           border: '1px solid #333'
         }}>
           <span style={{ fontSize: '1.2rem', marginRight: '1rem', opacity: 0.5 }}>🔍</span>
@@ -85,22 +85,17 @@ export default function Home() {
             }} 
           />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ccc', fontWeight: 500 }}>
-          <span>⛅ 23°C</span>
-          <span style={{ opacity: 0.5 }}>|</span>
-          <span>Hanthana</span>
-        </div>
       </div>
 
       {/* MSN Style Navigation */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem 2rem 2rem', display: 'flex', gap: '1.5rem', overflowX: 'auto', borderBottom: '1px solid #2a2a2a', marginBottom: '2rem' }}>
+      <div style={{ width: '100%', padding: '0 2rem 1.5rem 2rem', display: 'flex', gap: '1.5rem', overflowX: 'auto', borderBottom: '1px solid #2a2a2a', marginBottom: '2rem' }}>
         <div style={{ background: 'var(--accent)', color: 'black', padding: '0.4rem 1.2rem', borderRadius: '16px', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer' }}>Discover</div>
         <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Networking</div>
         <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Data Science</div>
         <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Labs</div>
       </div>
 
-      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
+      <main style={{ width: '100%', padding: '0 2rem' }}>
         {articles.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '4rem' }}>
             <div className="loader"></div>
@@ -109,8 +104,8 @@ export default function Home() {
         ) : (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gridAutoRows: '300px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+            gridAutoRows: '320px',
             gap: '1.5rem',
             gridAutoFlow: 'dense'
           }}>
@@ -118,10 +113,9 @@ export default function Home() {
             {/* The MSN Grid Items */}
             {articles.map((article, index) => {
               const thumbnailUrl = extractImage(article.content);
-              // Make the first article big (span 2 columns, span 2 rows) ONLY if we have multiple articles to fill the grid, to prevent it looking ugly and massive alone.
               const isFeatured = index === 0 && thumbnailUrl && articles.length > 2;
               
-              return (
+              const articleCard = (
                 <Link key={article.id} href={`/blog/${article.id}`} style={{ 
                   display: 'block',
                   textDecoration: 'none',
@@ -224,50 +218,59 @@ export default function Home() {
                   </div>
                 </Link>
               );
+
+              // Inject the Weather widget right after the featured article (index 0)
+              if (index === 0) {
+                return (
+                  <React.Fragment key="weather-injection">
+                    {articleCard}
+                    <div style={{ 
+                      gridColumn: 'span 1', 
+                      gridRow: 'span 1', 
+                      background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', 
+                      borderRadius: '16px', 
+                      padding: '1.5rem', 
+                      color: 'white',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      border: '1px solid #333',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                    }}>
+                      <div>
+                        <p style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
+                          <span>{days[currentTime.getDay()]}, {months[currentTime.getMonth()]} {currentTime.getDate()}</span>
+                          <span>📍 Hanthana</span>
+                        </p>
+                        <h1 style={{ fontSize: '3rem', margin: '1rem 0 0 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          23° <span style={{ fontSize: '2rem' }}>⛅</span>
+                        </h1>
+                        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '0.5rem' }}>Partly cloudy. High 26° Low 18°.</p>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+                        <div style={{ textAlign: 'center' }}>
+                          <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>12 PM</p>
+                          <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☀️</p>
+                          <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>25°</p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>3 PM</p>
+                          <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>⛅</p>
+                          <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>24°</p>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>6 PM</p>
+                          <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☁️</p>
+                          <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>21°</p>
+                        </div>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+
+              return articleCard;
             })}
-
-            {/* Weather / Time Widget Card injected at the end of the grid */}
-            <div style={{ 
-              gridColumn: 'span 1', 
-              gridRow: 'span 1', 
-              background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', 
-              borderRadius: '16px', 
-              padding: '1.5rem', 
-              color: 'white',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              border: '1px solid #333'
-            }}>
-              <div>
-                <p style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{days[currentTime.getDay()]}, {months[currentTime.getMonth()]} {currentTime.getDate()}</span>
-                  <span>📍 Hanthana</span>
-                </p>
-                <h1 style={{ fontSize: '3rem', margin: '1rem 0 0 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  23° <span style={{ fontSize: '2rem' }}>⛅</span>
-                </h1>
-                <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '0.5rem' }}>Partly cloudy. High 26° Low 18°.</p>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>12 PM</p>
-                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☀️</p>
-                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>25°</p>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>3 PM</p>
-                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>⛅</p>
-                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>24°</p>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>6 PM</p>
-                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☁️</p>
-                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>21°</p>
-                </div>
-              </div>
-            </div>
-
           </div>
         )}
       </main>
