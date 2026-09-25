@@ -51,7 +51,7 @@ export default function Home() {
       .replace(/#+\s/g, '') // Remove Markdown headers
       .replace(/\s+/g, ' ') // Squash multiple spaces
       .trim()
-      .substring(0, 180);
+      .substring(0, 100);
   };
 
   return (
@@ -66,7 +66,7 @@ export default function Home() {
         </p>
       </header>
 
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
         {articles.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '4rem' }}>
             <div className="loader"></div>
@@ -75,38 +75,99 @@ export default function Home() {
         ) : (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', 
-            gap: '2rem',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
+            gridAutoRows: '380px',
+            gap: '1.5rem',
             marginTop: '2rem' 
           }}>
-            {articles.map(article => {
+            {articles.map((article, index) => {
               const thumbnailUrl = extractImage(article.content);
+              const isFeatured = index === 0 && thumbnailUrl; // First article is featured if it has an image
+              
               return (
-                <div key={article.id} className="glass-panel" style={{ 
-                  margin: 0, 
-                  maxWidth: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  padding: 0,
-                  overflow: 'hidden'
-                }}>
-                  <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
-                    <div>
-                      <h2 style={{ fontSize: '1.5rem', lineHeight: '1.3', marginBottom: '1rem' }}>
-                        <Link href={`/blog/${article.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none' }}>{article.title}</Link>
-                      </h2>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '1rem' }}>
-                        By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
-                      </p>
-                      <p style={{ marginTop: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6, wordBreak: 'break-word', overflowWrap: 'break-word', fontSize: '0.95rem' }}>
-                        {cleanSnippet(article.content)}...
-                      </p>
-                    </div>
-                    <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                      <Link href={`/blog/${article.id}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>Read Full Article <span style={{ fontSize: '1.2rem' }}>&rarr;</span></Link>
-                    </div>
+                <Link key={article.id} href={`/blog/${article.id}`} style={{ 
+                  display: 'block',
+                  textDecoration: 'none',
+                  gridColumn: isFeatured ? '1 / -1' : 'auto',
+                  gridRow: isFeatured ? 'span 2' : 'span 1',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  backgroundColor: 'var(--glass-bg)',
+                  border: '1px solid var(--glass-border)',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                }}
+                className="msn-card"
+                >
+                  {thumbnailUrl ? (
+                    <>
+                      <img src={thumbnailUrl} alt="Article Thumbnail" style={{ 
+                        position: 'absolute', 
+                        top: 0, 
+                        left: 0, 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover',
+                        zIndex: 0
+                      }} />
+                      <div style={{ 
+                        position: 'absolute', 
+                        bottom: 0, 
+                        left: 0, 
+                        width: '100%', 
+                        height: '100%', 
+                        background: 'linear-gradient(to top, rgba(11,15,25,1) 0%, rgba(11,15,25,0.8) 40%, rgba(11,15,25,0) 100%)',
+                        zIndex: 1
+                      }}></div>
+                    </>
+                  ) : (
+                    <div style={{ 
+                      position: 'absolute', 
+                      inset: 0, 
+                      background: 'radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent)',
+                      zIndex: 0
+                    }}></div>
+                  )}
+
+                  <div style={{ 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    left: 0, 
+                    width: '100%', 
+                    padding: isFeatured ? '3rem' : '1.5rem', 
+                    zIndex: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    height: '100%'
+                  }}>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                      {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
+                    </p>
+                    <h2 style={{ 
+                      fontSize: isFeatured ? '2.5rem' : '1.5rem', 
+                      lineHeight: '1.2', 
+                      marginBottom: '0.5rem',
+                      color: '#ffffff',
+                      textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                    }}>
+                      {article.title}
+                    </h2>
+                    <p style={{ 
+                      color: 'rgba(255,255,255,0.8)', 
+                      lineHeight: 1.5, 
+                      fontSize: isFeatured ? '1.1rem' : '0.95rem',
+                      display: '-webkit-box',
+                      WebkitLineClamp: isFeatured ? 3 : 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                    }}>
+                      {cleanSnippet(article.content)}...
+                    </p>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -121,6 +182,20 @@ export default function Home() {
           <a href="/encrypt" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Encryption Tool</a>
         </div>
       </footer>
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        .msn-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0,229,255,0.2) !important;
+        }
+        .msn-card:hover img {
+          transform: scale(1.05);
+          transition: transform 0.5s ease;
+        }
+        .msn-card img {
+          transition: transform 0.5s ease;
+        }
+      `}} />
     </>
   );
 }
