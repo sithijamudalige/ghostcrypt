@@ -27,9 +27,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  
   overflow-x: hidden;
-  padding: 4rem 1rem;
+  padding: 4rem 0;
 }
 
 /* Article Styles */
@@ -307,7 +307,7 @@ button:disabled {
   font-size: 0.9rem;
   transition: all 0.2s;
   display: flex;
-  align-items: center;
+  
   gap: 0.5rem;
   margin-top: 1rem;
 }
@@ -334,7 +334,7 @@ button:disabled {
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  
   padding: 1rem 2rem;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
@@ -347,7 +347,7 @@ button:disabled {
 
 .navbar-logo {
   display: flex;
-  align-items: center;
+  
   gap: 1rem;
   text-decoration: none;
   color: var(--text-primary);
@@ -359,7 +359,7 @@ button:disabled {
 .navbar-links {
   display: flex;
   gap: 1.5rem;
-  align-items: center;
+  
 }
 
 .navbar-links a {
