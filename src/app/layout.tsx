@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NETCAD - Tech & Cybersecurity Portal",
-  description: "Community-driven tech insights, cybersecurity tools, and interactive learning.",
+  title: "NETCAD - IT & Data Science Portal",
+  description: "Community-driven networking insights, data science, and interactive learning.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

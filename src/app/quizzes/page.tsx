@@ -31,7 +31,7 @@ export default function QuizzesIndex() {
         </Link>
         
         <h1>NEDCAD Quizzes</h1>
-        <p className="subtitle">Test your cybersecurity and tech knowledge</p>
+        <p className="subtitle">Test your networking and data science knowledge</p>
         
         {loading ? (
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading quizzes...</p>

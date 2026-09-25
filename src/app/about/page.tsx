@@ -12,12 +12,12 @@ export default function AboutPage() {
       
       <div style={{ lineHeight: 1.8, color: 'var(--text-primary)', fontSize: '1.1rem' }}>
         <p style={{ marginBottom: '1.5rem' }}>
-          Welcome to <strong>NETCAD</strong>, your premier destination for advanced networking tutorials, hands-on Packet Tracer labs, and cybersecurity education. 
+          Welcome to <strong>NETCAD</strong>, your premier destination for advanced networking tutorials, hands-on Packet Tracer labs, and data science education. 
         </p>
 
         <h2 style={{ color: 'white', marginTop: '2rem', marginBottom: '1rem' }}>Our Mission</h2>
         <p style={{ marginBottom: '1.5rem' }}>
-          Our mission is to bridge the gap between theoretical IT concepts and real-world practical application. Whether you are studying for your CCNA, exploring VLAN architectures, or looking to sharpen your cybersecurity skills with tools like GhostCrypt, NETCAD provides completely free, high-quality resources to help you succeed.
+          Our mission is to bridge the gap between theoretical IT concepts and real-world practical application. Whether you are studying for your CCNA, exploring VLAN architectures, or looking to sharpen your IT and data science skills, NETCAD provides completely free, high-quality resources to help you succeed.
         </p>
 
         <h2 style={{ color: 'white', marginTop: '2rem', marginBottom: '1rem' }}>What We Offer</h2>

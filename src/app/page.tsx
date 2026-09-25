@@ -62,7 +62,7 @@ export default function Home() {
       <header style={{ textAlign: 'center', margin: '4rem 0' }}>
         <h1 className="title" style={{ fontSize: '3.5rem' }}>Welcome to NETCAD</h1>
         <p className="subtitle" style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
-          Explore our latest cybersecurity articles, hands-on packet tracer labs, and networking resources.
+          Explore our latest networking articles, hands-on packet tracer labs, and data science resources.
         </p>
       </header>
 
