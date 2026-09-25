@@ -10,7 +10,6 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // If the user just logged in via OAuth, redirect them to the dashboard immediately
     if (typeof window !== 'undefined' && localStorage.getItem('is_logging_in') === 'true') {
       localStorage.removeItem('is_logging_in');
       router.push('/dashboard');
@@ -32,39 +31,74 @@ export default function Home() {
   }, [router]);
 
   const extractImage = (content: string) => {
-    // Extract first markdown image
     const mdMatch = content.match(/!\[.*?\]\((.*?)\)/);
     if (mdMatch) return mdMatch[1];
-    
-    // Extract first HTML image
     const htmlMatch = content.match(/<img[^>]+src="([^">]+)"/);
     if (htmlMatch) return htmlMatch[1];
-    
     return null;
   };
 
   const cleanSnippet = (content: string) => {
     return content
-      .replace(/!\[.*?\]\(.*?\)/g, '') // Remove Markdown images
-      .replace(/<[^>]+>/g, ' ') // Remove HTML tags
-      .replace(/(?:⬇️\s*)?Download Lab:.*?https:\/\/\S+/g, '') // Remove Lab links
-      .replace(/#+\s/g, '') // Remove Markdown headers
-      .replace(/\s+/g, ' ') // Squash multiple spaces
+      .replace(/!\[.*?\]\(.*?\)/g, '') 
+      .replace(/<[^>]+>/g, ' ') 
+      .replace(/(?:⬇️\s*)?Download Lab:.*?https:\/\/\S+/g, '') 
+      .replace(/#+\s/g, '') 
+      .replace(/\s+/g, ' ') 
       .trim()
       .substring(0, 100);
   };
 
-  return (
-    <>
-      <div className="orb orb-1"></div>
-      <div className="orb orb-2"></div>
+  const currentTime = new Date();
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-      <header style={{ textAlign: 'center', margin: '4rem 0' }}>
-        <h1 className="title" style={{ fontSize: '3.5rem' }}>Welcome to NETCAD</h1>
-        <p className="subtitle" style={{ fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
-          Explore our latest networking articles, hands-on packet tracer labs, and data science resources.
-        </p>
-      </header>
+  return (
+    <div style={{ background: '#121212', minHeight: '100vh', paddingBottom: '4rem' }}>
+      <div className="orb orb-1" style={{ opacity: 0.3 }}></div>
+      <div className="orb orb-2" style={{ opacity: 0.3 }}></div>
+
+      {/* MSN Style Top Header */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          background: '#1e1e1e', 
+          borderRadius: '24px', 
+          padding: '0.5rem 1.5rem', 
+          width: '100%', 
+          maxWidth: '600px',
+          border: '1px solid #333'
+        }}>
+          <span style={{ fontSize: '1.2rem', marginRight: '1rem', opacity: 0.5 }}>🔍</span>
+          <input 
+            type="text" 
+            placeholder="Search articles, networking, data science..." 
+            style={{ 
+              background: 'transparent', 
+              border: 'none', 
+              color: 'white', 
+              width: '100%', 
+              padding: '0.5rem 0',
+              outline: 'none',
+              fontSize: '1rem'
+            }} 
+          />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ccc', fontWeight: 500 }}>
+          <span>⛅ 23°C</span>
+          <span style={{ opacity: 0.5 }}>|</span>
+          <span>Hanthana</span>
+        </div>
+      </div>
+
+      {/* MSN Style Navigation */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem 2rem 2rem', display: 'flex', gap: '1.5rem', overflowX: 'auto', borderBottom: '1px solid #2a2a2a', marginBottom: '2rem' }}>
+        <div style={{ background: 'var(--accent)', color: 'black', padding: '0.4rem 1.2rem', borderRadius: '16px', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer' }}>Discover</div>
+        <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Networking</div>
+        <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Data Science</div>
+        <div style={{ padding: '0.4rem 1.2rem', color: '#aaa', fontWeight: 500, fontSize: '0.9rem', cursor: 'pointer' }}>Labs</div>
+      </div>
 
       <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
         {articles.length === 0 ? (
@@ -75,27 +109,30 @@ export default function Home() {
         ) : (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
-            gridAutoRows: '380px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+            gridAutoRows: '300px',
             gap: '1.5rem',
-            marginTop: '2rem' 
+            gridAutoFlow: 'dense'
           }}>
+            
+            {/* The MSN Grid Items */}
             {articles.map((article, index) => {
               const thumbnailUrl = extractImage(article.content);
-              const isFeatured = index === 0 && thumbnailUrl; // First article is featured if it has an image
+              // Make the first article big (span 2 columns, span 2 rows) ONLY if we have multiple articles to fill the grid, to prevent it looking ugly and massive alone.
+              const isFeatured = index === 0 && thumbnailUrl && articles.length > 2;
               
               return (
                 <Link key={article.id} href={`/blog/${article.id}`} style={{ 
                   display: 'block',
                   textDecoration: 'none',
-                  gridColumn: isFeatured ? '1 / -1' : 'auto',
+                  gridColumn: isFeatured ? 'span 2' : 'span 1',
                   gridRow: isFeatured ? 'span 2' : 'span 1',
                   borderRadius: '16px',
                   overflow: 'hidden',
                   position: 'relative',
-                  backgroundColor: 'var(--glass-bg)',
-                  border: '1px solid var(--glass-border)',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  backgroundColor: '#1a1a1a',
+                  border: '1px solid #2a2a2a',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                 }}
                 className="msn-card"
@@ -107,19 +144,31 @@ export default function Home() {
                         top: 0, 
                         left: 0, 
                         width: '100%', 
-                        height: '100%', 
+                        height: isFeatured ? '100%' : '60%', 
                         objectFit: 'cover',
                         zIndex: 0
                       }} />
-                      <div style={{ 
-                        position: 'absolute', 
-                        bottom: 0, 
-                        left: 0, 
-                        width: '100%', 
-                        height: '100%', 
-                        background: 'linear-gradient(to top, rgba(11,15,25,1) 0%, rgba(11,15,25,0.8) 40%, rgba(11,15,25,0) 100%)',
-                        zIndex: 1
-                      }}></div>
+                      {isFeatured ? (
+                        <div style={{ 
+                          position: 'absolute', 
+                          bottom: 0, 
+                          left: 0, 
+                          width: '100%', 
+                          height: '100%', 
+                          background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)',
+                          zIndex: 1
+                        }}></div>
+                      ) : (
+                        <div style={{ 
+                          position: 'absolute', 
+                          bottom: 0, 
+                          left: 0, 
+                          width: '100%', 
+                          height: '40%', 
+                          background: '#1a1a1a',
+                          zIndex: 1
+                        }}></div>
+                      )}
                     </>
                   ) : (
                     <div style={{ 
@@ -135,67 +184,101 @@ export default function Home() {
                     bottom: 0, 
                     left: 0, 
                     width: '100%', 
-                    padding: isFeatured ? '3rem' : '1.5rem', 
+                    padding: isFeatured ? '2rem' : '1.2rem', 
                     zIndex: 2,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-end',
-                    height: '100%'
+                    height: isFeatured ? '100%' : (thumbnailUrl ? '40%' : '100%')
                   }}>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 'bold', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                      {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}
+                    <p style={{ fontSize: '0.75rem', color: isFeatured ? 'var(--accent)' : '#aaa', fontWeight: 'bold', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                      {article.profiles?.full_name || article.profiles?.email || 'Anonymous'}
                     </p>
                     <h2 style={{ 
-                      fontSize: isFeatured ? '2.5rem' : '1.5rem', 
-                      lineHeight: '1.2', 
+                      fontSize: isFeatured ? '2rem' : '1.1rem', 
+                      lineHeight: '1.3', 
                       marginBottom: '0.5rem',
                       color: '#ffffff',
-                      textShadow: '0 2px 4px rgba(0,0,0,0.8)'
+                      textShadow: isFeatured ? '0 2px 4px rgba(0,0,0,0.8)' : 'none',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
                     }}>
                       {article.title}
                     </h2>
-                    <p style={{ 
-                      color: 'rgba(255,255,255,0.8)', 
-                      lineHeight: 1.5, 
-                      fontSize: isFeatured ? '1.1rem' : '0.95rem',
-                      display: '-webkit-box',
-                      WebkitLineClamp: isFeatured ? 3 : 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      textShadow: '0 1px 2px rgba(0,0,0,0.8)'
-                    }}>
-                      {cleanSnippet(article.content)}...
-                    </p>
+                    {isFeatured && (
+                      <p style={{ 
+                        color: 'rgba(255,255,255,0.8)', 
+                        lineHeight: 1.5, 
+                        fontSize: '1rem',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textShadow: '0 1px 2px rgba(0,0,0,0.8)'
+                      }}>
+                        {cleanSnippet(article.content)}...
+                      </p>
+                    )}
                   </div>
                 </Link>
               );
             })}
+
+            {/* Weather / Time Widget Card injected at the end of the grid */}
+            <div style={{ 
+              gridColumn: 'span 1', 
+              gridRow: 'span 1', 
+              background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', 
+              borderRadius: '16px', 
+              padding: '1.5rem', 
+              color: 'white',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              border: '1px solid #333'
+            }}>
+              <div>
+                <p style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{days[currentTime.getDay()]}, {months[currentTime.getMonth()]} {currentTime.getDate()}</span>
+                  <span>📍 Hanthana</span>
+                </p>
+                <h1 style={{ fontSize: '3rem', margin: '1rem 0 0 0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  23° <span style={{ fontSize: '2rem' }}>⛅</span>
+                </h1>
+                <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '0.5rem' }}>Partly cloudy. High 26° Low 18°.</p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>12 PM</p>
+                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☀️</p>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>25°</p>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>3 PM</p>
+                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>⛅</p>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>24°</p>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>6 PM</p>
+                  <p style={{ fontSize: '1.2rem', margin: '0.2rem 0' }}>☁️</p>
+                  <p style={{ fontSize: '0.9rem', fontWeight: 600 }}>21°</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
       </main>
-
-      <footer style={{ marginTop: '4rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', zIndex: 10, paddingBottom: '2rem' }}>
-        <p>&copy; {new Date().getFullYear()} Developed and All Rights Reserved by NETCAD.</p>
-        <div style={{ marginTop: '0.5rem', display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <a href="/login" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>Login / Dashboard</a>
-          <a href="/quizzes" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Quizzes</a>
-          <a href="/encrypt" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Encryption Tool</a>
-        </div>
-      </footer>
       
       <style dangerouslySetInnerHTML={{__html: `
         .msn-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 35px rgba(0,229,255,0.2) !important;
-        }
-        .msn-card:hover img {
-          transform: scale(1.05);
-          transition: transform 0.5s ease;
-        }
-        .msn-card img {
-          transition: transform 0.5s ease;
+          transform: scale(1.02);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.8) !important;
+          border-color: var(--accent);
         }
       `}} />
-    </>
+    </div>
   );
 }
