@@ -83,6 +83,24 @@ export default function AdminArticles() {
     setIsPublishingArticle(false);
   };
 
+  const uploadPDFFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishingArticle(true);
+    setArticleMessage("Uploading PDF guide...");
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    const { error } = await supabase.storage.from('labs').upload(fileName, file);
+    if (!error) {
+      const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
+      const displayName = labName.trim() !== '' ? labName : file.name;
+      setArticleContent(prev => prev + `\n\n<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--accent); margin: 15px 0;">\n  <a href="${publicUrl}" target="_blank" class="lab-download-btn" style="margin-top:0;">📄 Download Config PDF: ${displayName}</a>\n</div>\n\n`);
+      setArticleMessage("PDF uploaded!");
+    } else {
+      setArticleMessage("Error: " + error.message);
+    }
+    setIsPublishingArticle(false);
+  };
+
   const publishAdminArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!articleTitle) return alert("Title required");
@@ -196,20 +214,23 @@ export default function AdminArticles() {
             <label>YouTube Embed Link (Optional)</label>
             <input type="text" value={articleYoutube} onChange={e => setArticleYoutube(e.target.value)} />
           </div>
-          <div className="responsive-grid-2-end">
+            <div className="responsive-grid-2-end">
             <div className="input-group">
               <label>Insert Image</label>
               <input type="file" accept="image/*" onChange={uploadArticleImage} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
             </div>
             <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <label>Attach Lab File (.pkt, .ipynb)</label>
-              <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
-              <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishingArticle} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+              <label>Attach Files (.pkt, .ipynb, .pdf)</label>
+              <input type="text" placeholder="Custom File Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishingArticle} title="Upload Lab File" style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+                <input type="file" accept=".pdf" onChange={uploadPDFFile} disabled={isPublishingArticle} title="Upload PDF Guide" style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+              </div>
             </div>
           </div>
-          {!isLabPost && (
+          
             <div className="input-group" data-color-mode="dark">
-              <label>Article Content</label>
+              <label>Content (Editor is active for all posts)</label>
               <MDEditor 
                 value={articleContent} 
                 onChange={val => setArticleContent(val || '')} 
@@ -225,7 +246,7 @@ export default function AdminArticles() {
                 }}
               />
             </div>
-          )}
+          
           {articleMessage && <p style={{ color: articleMessage.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{articleMessage}</p>}
           <button type="submit" className="primary" disabled={isPublishingArticle}>{editingArticleId ? "Update Content" : "Publish Content"}</button>
         </form>

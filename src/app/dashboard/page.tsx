@@ -142,6 +142,29 @@ export default function Dashboard() {
     setIsPublishing(false);
   };
 
+  const uploadPDFFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsPublishing(true);
+    setMessage("Uploading PDF guide...");
+    
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    
+    const { error } = await supabase.storage
+      .from('labs')
+      .upload(fileName, file);
+      
+    if (error) {
+      setMessage("Error uploading PDF: " + error.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
+      const displayName = labName.trim() !== '' ? labName : file.name;
+      setContent(prev => prev + `\n\n<div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; border: 1px solid var(--accent); margin: 15px 0;">\n  <a href="${publicUrl}" target="_blank" class="lab-download-btn" style="margin-top:0;">📄 Download Config PDF: ${displayName}</a>\n</div>\n\n`);
+      setMessage("PDF uploaded and injected into article!");
+    }
+    setIsPublishing(false);
+  };
+
   const createQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quizTitle) return alert("Title required");
@@ -206,15 +229,18 @@ export default function Dashboard() {
               </div>
               {role === 'admin' && (
                 <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label>Attach Lab File (.pkt, .ipynb)</label>
-                  <input type="text" placeholder="Custom Lab Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
-                  <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+                  <label>Attach Files (.pkt, .ipynb, .pdf)</label>
+                  <input type="text" placeholder="Custom File Name (Optional)" value={labName} onChange={e => setLabName(e.target.value)} style={{ width: '100%' }} />
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input type="file" accept=".pkt,.ipynb" onChange={uploadLabFile} disabled={isPublishing} title="Upload Lab File" style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+                    <input type="file" accept=".pdf" onChange={uploadPDFFile} disabled={isPublishing} title="Upload PDF Guide" style={{ padding: '0.8rem', background: 'rgba(0,0,0,0.5)', color: 'white', borderRadius: '8px', border: '1px solid var(--glass-border)', width: '100%' }} />
+                  </div>
                 </div>
               )}
             </div>
-            {!isLabPost && (
+            
               <div className="input-group" data-color-mode="dark">
-                <label>Article Content (Use the toolbar to add tables and format text!)</label>
+                <label>Content (Editor is active for all posts)</label>
                 <MDEditor 
                   value={content} 
                   onChange={val => setContent(val || '')} 
@@ -230,7 +256,6 @@ export default function Dashboard() {
                   }}
                 />
               </div>
-            )}
             {message && <p style={{ color: message.includes('Error') ? 'var(--error)' : 'var(--accent)' }}>{message}</p>}
             <button type="submit" className="primary" disabled={isPublishing}>
               {isPublishing ? 'Publishing...' : 'Publish Article'}
