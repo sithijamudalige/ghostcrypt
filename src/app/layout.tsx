@@ -35,7 +35,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <ClientNavbar />
-        {children}
+        <div style={{ flex: '1 0 auto' }}>
+          {children}
+        </div>
+        <footer style={{ width: '100%', padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.9rem', borderTop: '1px solid #1a2333', background: 'var(--bg-primary)', marginTop: 'auto' }}>
+          <p>&copy; {new Date().getFullYear()} NETCAD. All rights reserved.</p>
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href="/about" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>About Us</Link>
+            <Link href="/contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Contact</Link>
+            <Link href="/privacy" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link href="/terms" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Terms of Service</Link>
+          </div>
+        </footer>
         <CookieBanner />
       </body>
     </html>
