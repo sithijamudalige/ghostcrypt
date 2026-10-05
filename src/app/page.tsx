@@ -54,7 +54,7 @@ export default function Home() {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   return (
-    <div style={{ background: '#121212', minHeight: '100vh', paddingBottom: '4rem' }}>
+    <div style={{ background: '#121212', minHeight: '100vh', paddingBottom: '4rem', width: '100%' }}>
       <div className="orb orb-1" style={{ opacity: 0.3 }}></div>
       <div className="orb orb-2" style={{ opacity: 0.3 }}></div>
 
