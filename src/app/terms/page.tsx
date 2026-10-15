@@ -1,5 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service | NETCAD',
+  description: 'Terms of Service and Usage Conditions for NETCAD (netcad.company).',
+};
 
 export default function TermsOfService() {
   return (
@@ -7,48 +13,43 @@ export default function TermsOfService() {
       <div className="orb orb-1"></div>
       <div className="orb orb-2"></div>
       
-      <main className="glass-panel legal-panel" style={{ marginTop: '2rem', marginBottom: '4rem' }}>
+      <main className="glass-panel legal-panel" style={{ maxWidth: '900px', margin: '4rem auto', padding: '3rem' }}>
         <Link href="/" style={{ color: 'var(--accent)', textDecoration: 'none', display: 'inline-block', marginBottom: '2rem' }}>
           &larr; Back to Home
         </Link>
         
-        <h1>Terms of Service</h1>
-        <p className="subtitle">Last updated: {new Date().toLocaleDateString()}</p>
+        <h1 style={{ fontSize: '2.5rem', color: 'var(--accent)', marginBottom: '0.5rem' }}>Terms of Service</h1>
+        <p className="subtitle" style={{ marginBottom: '2rem' }}>Last updated: October 2026</p>
         
-        <section className="content-section" style={{ background: 'transparent', border: 'none', padding: 0, marginTop: '2rem' }}>
+        <section className="content-section" style={{ background: 'transparent', border: 'none', padding: 0, lineHeight: 1.8 }}>
           <h2>1. Acceptance of Terms</h2>
           <p>
-            By accessing and using GhostCrypt (the "Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these terms, please do not use this Service.
+            By accessing or using <strong>NETCAD</strong> (the "Service", hosted at <a href="https://netcad.company" style={{ color: 'var(--accent)' }}>netcad.company</a>), you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, please do not use the website.
           </p>
 
-          <h2>2. Description of Service</h2>
+          <h2>2. Description of Educational Services</h2>
           <p>
-            GhostCrypt provides a web-based client-side encryption and decryption tool using the AES-256-GCM algorithm. The Service is provided "as is" without warranties of any kind.
+            NETCAD provides educational articles, networking protocol breakdowns, downloadable Cisco Packet Tracer (.pkt) practice files, data science tutorials, and interactive web tools. The content is provided for educational and informational purposes only.
           </p>
 
-          <h2>3. Acceptable Use</h2>
+          <h2>3. Intellectual Property & Fair Use</h2>
           <p>
-            You agree to use the Service only for lawful purposes. You are strictly prohibited from using the Service to:
-          </p>
-          <ul>
-            <li>Encrypt or transmit illegal, harmful, or malicious content.</li>
-            <li>Engage in any activity that violates any applicable local, state, national, or international law.</li>
-            <li>Attempt to reverse engineer, disrupt, or compromise the integrity of the Service.</li>
-          </ul>
-
-          <h2>4. User Responsibility</h2>
-          <p>
-            You are entirely responsible for remembering and securing your passwords. GhostCrypt operates on a zero-knowledge basis; we do not store your passwords and <strong>cannot recover lost passwords or decrypt data on your behalf</strong>. If you lose your password, your encrypted data is permanently inaccessible.
+            All original articles, tutorials, diagrams, and code snippets created by NETCAD are protected by applicable copyright and intellectual property laws. Users may download lab materials and code for personal, academic, and non-commercial educational use.
           </p>
 
-          <h2>5. Limitation of Liability</h2>
+          <h2>4. User Conduct & Acceptable Use</h2>
           <p>
-            In no event shall GhostCrypt, its developers (including Sithija Mudalige), or its affiliates be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of data, loss of profits, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
+            You agree not to use NETCAD for any unlawful purpose, to distribute malicious scripts, or to attempt unauthorized access to our administrative systems or databases.
           </p>
 
-          <h2>6. Modifications to the Service</h2>
+          <h2>5. Disclaimer of Warranties & Limitation of Liability</h2>
           <p>
-            We reserve the right to modify or discontinue, temporarily or permanently, the Service with or without notice. We shall not be liable to you or to any third party for any modification, suspension, or discontinuance of the Service.
+            The educational materials and software tools on NETCAD are provided "as is" without warranty of any kind. NETCAD and its founder (Sithija Mudalige) shall not be liable for any network downtime, data loss, or misconfigurations resulting from the application of lab exercises on production hardware.
+          </p>
+
+          <h2>6. Contact Information</h2>
+          <p>
+            For any questions or legal inquiries regarding these Terms of Service, please reach out via our <Link href="/contact" style={{ color: 'var(--accent)' }}>Contact Page</Link> or by emailing <a href="mailto:sithijamudalige15@gmail.com" style={{ color: 'var(--accent)' }}>sithijamudalige15@gmail.com</a>.
           </p>
         </section>
       </main>

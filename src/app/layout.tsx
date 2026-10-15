@@ -18,8 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://netcad.company'),
   title: "NETCAD - IT & Data Science Portal",
-  description: "Community-driven networking insights, data science, and interactive learning.",
+  description: "Comprehensive networking guides, Cisco Packet Tracer labs, and data science tutorials.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

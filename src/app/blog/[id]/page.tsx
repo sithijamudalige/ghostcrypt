@@ -1,32 +1,53 @@
-"use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
-export default function ArticleView() {
-  const { id } = useParams();
-  const [article, setArticle] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export const revalidate = 60;
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      const { data } = await supabase
-        .from('articles')
-        .select('*, profiles(full_name, email)')
-        .eq('id', id)
-        .single();
-      
-      setArticle(data);
-      setLoading(false);
-    };
-    if (id) fetchArticle();
-  }, [id]);
+export async function generateMetadata(
+  props: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const params = await props.params;
+  const { data: article } = await supabase
+    .from('articles')
+    .select('title, content, is_lab')
+    .eq('id', params.id)
+    .single();
 
-  if (loading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '5rem' }}>Loading...</div>;
-  if (!article) return <div style={{ color: 'white', textAlign: 'center', marginTop: '5rem' }}>Article not found</div>;
+  if (!article) {
+    return { title: 'Article Not Found | NETCAD' };
+  }
+
+  const wordCount = article.content ? article.content.split(/\s+/).length : 0;
+  const isThinContent = article.is_lab || wordCount < 250;
+
+  return {
+    title: `${article.title} | NETCAD`,
+    description: article.content.substring(0, 160).replace(/<[^>]+>/g, '').replace(/!\[.*?\]\(.*?\)/g, '').replace(/\s+/g, ' ').trim() + '...',
+    robots: {
+      index: !isThinContent,
+      follow: true,
+    }
+  };
+}
+
+export default async function ArticleView(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const id = params.id;
+
+  const { data: article, error } = await supabase
+    .from('articles')
+    .select('*, profiles(full_name, email)')
+    .eq('id', id)
+    .single();
+
+  if (error || !article) {
+    notFound();
+  }
 
   const extractImage = (content: string) => {
     const mdMatch = content.match(/!\[.*?\]\((.*?)\)/);
@@ -35,10 +56,9 @@ export default function ArticleView() {
     if (htmlMatch) return htmlMatch[1];
     return null;
   };
-  
+
   const coverImage = extractImage(article.content);
-  // We don't remove the image from the content so they can still see it in context, but we add it as a banner
-  
+
   return (
     <>
       <div className="orb orb-1"></div>
@@ -50,11 +70,13 @@ export default function ArticleView() {
         </Link>
         
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', lineHeight: '1.2' }}>{article.title}</h1>
-        <p className="subtitle" style={{ marginBottom: '2rem' }}>By {article.profiles?.full_name || article.profiles?.email || 'Anonymous'} &bull; {new Date(article.created_at).toLocaleDateString()}</p>
+        <p className="subtitle" style={{ marginBottom: '2rem' }}>
+          By {article.profiles?.full_name || article.profiles?.email || 'NETCAD Editorial Team'} &bull; {new Date(article.created_at).toLocaleDateString()}
+        </p>
         
         {coverImage && (
           <div style={{ marginBottom: '2.5rem', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-            <img src={coverImage} alt="Cover" style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <img src={coverImage} alt={article.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
         )}
         
@@ -105,7 +127,7 @@ export default function ArticleView() {
                 <img src={src} alt={alt || 'Article Image'} style={{maxWidth: '100%', height: 'auto', borderRadius: '12px', marginTop: '1rem', marginBottom: '1rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)', display: 'block'}} />
               ),
               p: ({node, children, ...props}) => <p style={{marginBottom: '1rem', maxWidth: '100%', overflowWrap: 'break-word'}}>{children}</p>,
-              a: ({node, children, href, ...props}) => <a href={href} style={{color: 'var(--accent)'}} target="_blank">{children}</a>
+              a: ({node, children, href, ...props}) => <a href={href} style={{color: 'var(--accent)'}} target="_blank" rel="noopener noreferrer">{children}</a>
             }}
           >
             {article.content}

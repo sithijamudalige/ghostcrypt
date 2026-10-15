@@ -36,7 +36,7 @@ export default function ClientNavbar() {
         <Link href="/">Articles</Link>
         <Link href="/labs" style={{ color: 'var(--accent)', fontWeight: 'bold' }}>Labs</Link>
         <Link href="/quizzes">Quizzes</Link>
-        <Link href="/encrypt">GhostCrypt</Link>
+        <Link href="/encrypt">Crypto Tool</Link>
         <Link href="/about">About</Link>
         <Link href="/contact">Contact</Link>
         
