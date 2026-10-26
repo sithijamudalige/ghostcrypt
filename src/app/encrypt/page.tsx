@@ -120,8 +120,8 @@ export default function Home() {
       <div className="orb orb-2"></div>
       
       <main className="glass-panel">
-        <h1>GhostCrypt</h1>
-        <p className="subtitle">Military-Grade Message & Image Encryption</p>
+        <h1>NETCAD Secure Payload Encryptor</h1>
+        <p className="subtitle">Client-Side AES-256-GCM Data & File Encryption</p>
 
         <div className="tabs">
           <button 

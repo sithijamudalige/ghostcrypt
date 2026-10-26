@@ -133,6 +133,56 @@ export default async function ArticleView(props: { params: Promise<{ id: string 
             {article.content}
           </ReactMarkdown>
         </section>
+
+        {/* Author Bio & E-E-A-T Box */}
+        <section style={{ 
+          marginTop: '3.5rem', 
+          padding: '2rem', 
+          background: 'rgba(0,0,0,0.4)', 
+          borderRadius: '12px', 
+          border: '1px solid var(--glass-border)',
+          display: 'flex',
+          gap: '1.5rem',
+          alignItems: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--accent) 0%, #0284c7 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            color: '#000',
+            flexShrink: 0
+          }}>
+            SM
+          </div>
+          <div style={{ flex: '1 1 300px' }}>
+            <h3 style={{ margin: '0 0 0.3rem 0', color: '#fff', fontSize: '1.2rem' }}>
+              Written by Sithija Mudalige
+            </h3>
+            <p style={{ margin: '0 0 0.5rem 0', color: 'var(--accent)', fontSize: '0.85rem', fontWeight: 600 }}>
+              Founder & Network Systems Specialist at NETCAD
+            </p>
+            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
+              Specializing in enterprise routing protocols, Cisco CCNA architectures, and practical virtual lab design. All Cisco Packet Tracer configurations and topologies on NETCAD are simulated and verified before publication.
+            </p>
+          </div>
+        </section>
+
+        {/* Back navigation & related links */}
+        <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.5rem' }}>
+          <Link href="/" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>
+            &larr; Back to All Articles
+          </Link>
+          <Link href="/labs" style={{ color: '#fff', textDecoration: 'none', fontWeight: 600, background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '6px', border: '1px solid var(--glass-border)' }}>
+            Explore Hands-On Labs &rarr;
+          </Link>
+        </div>
       </main>
     </>
   );

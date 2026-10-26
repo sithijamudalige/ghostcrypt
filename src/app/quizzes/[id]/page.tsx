@@ -37,11 +37,6 @@ export default function TakeQuiz() {
   };
 
   const submitQuiz = async () => {
-    if (!user) {
-      alert("You must be logged in to save your score!");
-      return;
-    }
-
     let calculatedScore = 0;
     questions.forEach(q => {
       if (answers[q.id] === q.correct_answer) {
@@ -52,11 +47,13 @@ export default function TakeQuiz() {
     setScore(calculatedScore);
     setSubmitted(true);
 
-    await supabase.from('quiz_results').insert([{
-      user_id: user.id,
-      quiz_id: id,
-      score: calculatedScore
-    }]);
+    if (user) {
+      await supabase.from('quiz_results').insert([{
+        user_id: user.id,
+        quiz_id: id,
+        score: calculatedScore
+      }]);
+    }
   };
 
   if (loading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '5rem' }}>Loading...</div>;
@@ -76,8 +73,8 @@ export default function TakeQuiz() {
         <p className="subtitle">{quiz.description}</p>
         
         {!user && (
-          <div style={{ padding: '1rem', background: 'rgba(255,0,0,0.2)', border: '1px solid var(--error)', borderRadius: '8px', marginBottom: '2rem' }}>
-            Warning: You are not logged in. Your score will not be saved. <Link href="/login" style={{color: 'var(--accent)'}}>Login here</Link>.
+          <div style={{ padding: '0.8rem 1.2rem', background: 'rgba(0, 229, 255, 0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+            💡 Tip: You can test your knowledge right now! To record your permanent score on your personal dashboard, <Link href="/login" style={{ color: 'var(--accent)', fontWeight: 600 }}>log in here</Link>.
           </div>
         )}
 
