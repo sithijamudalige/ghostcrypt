@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Metadata } from 'next';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Networking & CCNA Practice Quizzes | NETCAD',

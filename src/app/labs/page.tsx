@@ -84,15 +84,58 @@ function extractDescription(content: string): string {
   return cleaned.length > 180 ? cleaned.substring(0, 180) + '...' : cleaned;
 }
 
+function findMatchingArticle(labTitle: string, fullArticles: { id: string; title: string }[]) {
+  const norm = labTitle.toLowerCase();
+  if (norm.includes('stp') || norm.includes('spanning tree')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('spanning tree'));
+  }
+  if (norm.includes('cisco') && (norm.includes('free') || norm.includes('lab'))) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('cisco labs'));
+  }
+  if (norm.includes('roas') || norm.includes('router on stick')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('roas'));
+  }
+  if (norm.includes('ivr') || norm.includes('inter-vlan')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('inter-vlan'));
+  }
+  if (norm.includes('vtp')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('vtp'));
+  }
+  if (norm.includes('vlan')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('virtual local area network'));
+  }
+  if (norm.includes('etherchannel')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('etherchannel'));
+  }
+  if (norm.includes('telemetry') || norm.includes('tire') || norm.includes('traces')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('telemetry'));
+  }
+  // Generic fallback: check if any article title shares keywords
+  const words = norm.split(/\s+/).filter(w => w.length > 3);
+  for (const w of words) {
+    const found = fullArticles.find(a => a.title.toLowerCase().includes(w));
+    if (found) return found;
+  }
+  return null;
+}
+
 export default async function LabsIndex() {
-  const { data: labs } = await supabase
-    .from('articles')
-    .select('*, profiles(full_name, email)')
-    .eq('status', 'published')
-    .eq('is_lab', true)
-    .order('created_at', { ascending: false });
+  const [{ data: labs }, { data: fullArticles }] = await Promise.all([
+    supabase
+      .from('articles')
+      .select('*, profiles(full_name, email)')
+      .eq('status', 'published')
+      .eq('is_lab', true)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('articles')
+      .select('id, title')
+      .eq('status', 'published')
+      .eq('is_lab', false)
+  ]);
 
   const labList = labs || [];
+  const articlesList = fullArticles || [];
 
   return (
     <main style={{ marginTop: '2rem', marginBottom: '4rem', padding: '0 2rem', maxWidth: '1400px', margin: '2rem auto' }}>
@@ -119,6 +162,7 @@ export default async function LabsIndex() {
             const description = extractDescription(lab.content);
             const authorName = lab.profiles?.full_name || 'Sithija Mudalige';
             const dateStr = new Date(lab.created_at).toLocaleDateString();
+            const matchedArticle = findMatchingArticle(lab.title, articlesList);
 
             // Determine category badge based on download file types
             let badgeText = 'Cisco Packet Tracer Lab';
@@ -204,20 +248,26 @@ export default async function LabsIndex() {
                     </>
                   )}
 
-                  <Link 
-                    href={`/blog/${lab.id}`} 
-                    style={{ 
-                      color: 'var(--accent)', 
-                      textDecoration: 'none', 
-                      fontWeight: 'bold', 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem',
-                      fontSize: '0.95rem'
-                    }}
-                  >
-                    Open Lab Guide & Details &rarr;
-                  </Link>
+                  {matchedArticle ? (
+                    <Link 
+                      href={`/blog/${matchedArticle.id}`} 
+                      style={{ 
+                        color: 'var(--accent)', 
+                        textDecoration: 'none', 
+                        fontWeight: 'bold', 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem',
+                        fontSize: '0.95rem'
+                      }}
+                    >
+                      Read Full Configuration Guide &rarr;
+                    </Link>
+                  ) : (
+                    <span style={{ color: '#94a3b8', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                      ✓ Verified Lab Configuration
+                    </span>
+                  )}
                 </div>
               </div>
             );

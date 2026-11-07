@@ -1,23 +1,30 @@
 import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
 
-export const revalidate = 3600; // Regenerate sitemap at most once per hour
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://netcad.company';
 
-  // Fetch all published articles
+  // Fetch only high-value, comprehensive published articles (excluding thin lab download items)
   const { data: articles } = await supabase
     .from('articles')
-    .select('id, created_at, is_lab')
+    .select('id, created_at, content')
     .eq('status', 'published')
+    .eq('is_lab', false)
     .order('created_at', { ascending: false });
 
-  const articleEntries: MetadataRoute.Sitemap = (articles || []).map((art) => ({
+  const validArticles = (articles || []).filter(art => {
+    const wordCount = art.content ? art.content.split(/\s+/).filter(Boolean).length : 0;
+    return wordCount >= 250;
+  });
+
+  const articleEntries: MetadataRoute.Sitemap = validArticles.map((art) => ({
     url: `${baseUrl}/blog/${art.id}`,
     lastModified: art.created_at ? new Date(art.created_at) : new Date(),
     changeFrequency: 'weekly',
-    priority: art.is_lab ? 0.6 : 0.8,
+    priority: 0.8,
   }));
 
   const staticRoutes: MetadataRoute.Sitemap = [

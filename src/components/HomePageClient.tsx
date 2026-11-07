@@ -48,7 +48,8 @@ export default function HomePageClient({ initialArticles }: { initialArticles: a
       const titleLower = article.title.toLowerCase();
       return titleLower.includes('network') || titleLower.includes('vlan') || titleLower.includes('vtp') || 
              titleLower.includes('etherchannel') || titleLower.includes('router') || titleLower.includes('switch') || 
-             titleLower.includes('firewall') || titleLower.includes('roas') || titleLower.includes('ivr');
+             titleLower.includes('firewall') || titleLower.includes('roas') || titleLower.includes('ivr') ||
+             titleLower.includes('stp') || titleLower.includes('spanning') || titleLower.includes('cisco');
     }
     if (activeCategory === "Data Science") {
       const titleLower = article.title.toLowerCase();

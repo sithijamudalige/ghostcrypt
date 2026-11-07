@@ -12,10 +12,6 @@ const nextConfig: NextConfig = {
         headers: [ { key: 'X-Robots-Tag', value: 'noindex, nofollow' } ],
       },
       {
-        source: '/quizzes/:path*',
-        headers: [ { key: 'X-Robots-Tag', value: 'noindex, nofollow' } ],
-      },
-      {
         source: '/encrypt/:path*',
         headers: [ { key: 'X-Robots-Tag', value: 'noindex, nofollow' } ],
       },

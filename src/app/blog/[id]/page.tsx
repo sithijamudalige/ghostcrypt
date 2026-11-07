@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
 export const revalidate = 60;
@@ -47,6 +47,11 @@ export default async function ArticleView(props: { params: Promise<{ id: string 
 
   if (error || !article) {
     notFound();
+  }
+
+  // If a lab download post is directly accessed, redirect user to the rich Labs hub
+  if (article.is_lab) {
+    redirect('/labs');
   }
 
   const extractImage = (content: string) => {
