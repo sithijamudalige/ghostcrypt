@@ -21,12 +21,16 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://netcad.company'),
   title: "NETCAD - IT & Data Science Portal",
   description: "Comprehensive networking guides, Cisco Packet Tracer labs, and data science tutorials.",
+  verification: {
+    google: "imDYOSUyaJG-bZ-I1rsizS5OWAwXWf1j8mNN0knsOxk",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
+        <meta name="google-site-verification" content="imDYOSUyaJG-bZ-I1rsizS5OWAwXWf1j8mNN0knsOxk" />
         <meta name="google-adsense-account" content="ca-pub-6427210776008174" />
         <Script
           async
