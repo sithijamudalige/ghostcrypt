@@ -107,8 +107,11 @@ function findMatchingArticle(labTitle: string, fullArticles: { id: string; title
   if (norm.includes('etherchannel')) {
     return fullArticles.find(a => a.title.toLowerCase().includes('etherchannel'));
   }
-  if (norm.includes('telemetry') || norm.includes('tire') || norm.includes('traces')) {
+  if (norm.includes('telemetry') || norm.includes('tire') || norm.includes('traces') || norm.includes('f1')) {
     return fullArticles.find(a => a.title.toLowerCase().includes('telemetry'));
+  }
+  if (norm.includes('routing')) {
+    return fullArticles.find(a => a.title.toLowerCase().includes('routing'));
   }
   // Generic fallback: check if any article title shares keywords
   const words = norm.split(/\s+/).filter(w => w.length > 3);
