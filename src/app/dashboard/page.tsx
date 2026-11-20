@@ -96,14 +96,29 @@ export default function Dashboard() {
     }
   };
 
+  const getSafeStorageKey = (originalName: string) => {
+    const lastDot = originalName.lastIndexOf('.');
+    const base = lastDot !== -1 ? originalName.substring(0, lastDot) : originalName;
+    const ext = lastDot !== -1 ? originalName.substring(lastDot + 1) : '';
+
+    const cleanBase = base
+      .replace(/[—–]/g, '-')
+      .replace(/[^a-zA-Z0-9_\-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    const cleanExt = ext.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const prefix = Math.random().toString(36).substring(2, 10);
+    return `${prefix}_${cleanBase || 'upload'}.${cleanExt}`;
+  };
+
   const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsPublishing(true);
     setMessage("Uploading image to secure storage...");
     
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+    const fileName = getSafeStorageKey(file.name);
     
     const { error } = await supabase.storage
       .from('article_images')
@@ -125,7 +140,7 @@ export default function Dashboard() {
     setIsPublishing(true);
     setMessage("Uploading lab file...");
     
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    const fileName = getSafeStorageKey(file.name);
     
     const { error } = await supabase.storage
       .from('labs')
@@ -148,7 +163,7 @@ export default function Dashboard() {
     setIsPublishing(true);
     setMessage("Uploading PDF guide...");
     
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    const fileName = getSafeStorageKey(file.name);
     
     const { error } = await supabase.storage
       .from('labs')

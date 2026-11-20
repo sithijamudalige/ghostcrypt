@@ -48,12 +48,28 @@ export default function AdminArticles() {
     window.scrollTo(0, document.body.scrollHeight);
   };
 
+  const getSafeStorageKey = (originalName: string) => {
+    const lastDot = originalName.lastIndexOf('.');
+    const base = lastDot !== -1 ? originalName.substring(0, lastDot) : originalName;
+    const ext = lastDot !== -1 ? originalName.substring(lastDot + 1) : '';
+
+    const cleanBase = base
+      .replace(/[—–]/g, '-')
+      .replace(/[^a-zA-Z0-9_\-]/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    const cleanExt = ext.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    const prefix = Math.random().toString(36).substring(2, 10);
+    return `${prefix}_${cleanBase || 'upload'}.${cleanExt}`;
+  };
+
   const uploadArticleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsPublishingArticle(true);
     setArticleMessage("Uploading image...");
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${file.name.split('.').pop()}`;
+    const fileName = getSafeStorageKey(file.name);
     const { error } = await supabase.storage.from('article_images').upload(fileName, file);
     if (!error) {
       const { data: { publicUrl } } = supabase.storage.from('article_images').getPublicUrl(fileName);
@@ -70,7 +86,7 @@ export default function AdminArticles() {
     if (!file) return;
     setIsPublishingArticle(true);
     setArticleMessage("Uploading lab file...");
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    const fileName = getSafeStorageKey(file.name);
     const { error } = await supabase.storage.from('labs').upload(fileName, file);
     if (!error) {
       const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
@@ -88,7 +104,7 @@ export default function AdminArticles() {
     if (!file) return;
     setIsPublishingArticle(true);
     setArticleMessage("Uploading PDF guide...");
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${file.name}`;
+    const fileName = getSafeStorageKey(file.name);
     const { error } = await supabase.storage.from('labs').upload(fileName, file);
     if (!error) {
       const { data: { publicUrl } } = supabase.storage.from('labs').getPublicUrl(fileName);
