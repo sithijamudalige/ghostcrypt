@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import ArticleLikeButton from '@/components/ArticleLikeButton';
+import ArticleMetricsBadge from '@/components/ArticleMetricsBadge';
 
 export const revalidate = 60;
 
@@ -75,9 +77,12 @@ export default async function ArticleView(props: { params: Promise<{ id: string 
         </Link>
         
         <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem', lineHeight: '1.2' }}>{article.title}</h1>
-        <p className="subtitle" style={{ marginBottom: '2rem' }}>
-          By {article.profiles?.full_name || article.profiles?.email || 'NETCAD Editorial Team'} &bull; {new Date(article.created_at).toLocaleDateString()}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
+          <p className="subtitle" style={{ margin: 0 }}>
+            By {article.profiles?.full_name || article.profiles?.email || 'NETCAD Editorial Team'} &bull; {new Date(article.created_at).toLocaleDateString()}
+          </p>
+          <ArticleMetricsBadge articleId={article.id} createdAt={article.created_at} variant="inline" />
+        </div>
         
         {coverImage && (
           <div style={{ marginBottom: '2.5rem', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--glass-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
@@ -138,6 +143,9 @@ export default async function ArticleView(props: { params: Promise<{ id: string 
             {article.content}
           </ReactMarkdown>
         </section>
+
+        {/* Interactive Like Button & Total Views */}
+        <ArticleLikeButton articleId={article.id} createdAt={article.created_at} />
 
         {/* Author Bio & E-E-A-T Box */}
         <section style={{ 

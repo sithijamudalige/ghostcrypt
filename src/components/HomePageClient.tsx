@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ArticleMetricsBadge from "@/components/ArticleMetricsBadge";
 
 export default function HomePageClient({ initialArticles }: { initialArticles: any[] }) {
   const [articles] = useState<any[]>(initialArticles);
@@ -226,9 +227,12 @@ export default function HomePageClient({ initialArticles }: { initialArticles: a
                     justifyContent: 'flex-end',
                     height: isFeatured ? '100%' : (thumbnailUrl ? '40%' : '100%')
                   }}>
-                    <p style={{ fontSize: '0.75rem', color: isFeatured ? 'var(--accent)' : '#aaa', fontWeight: 'bold', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-                      {article.profiles?.full_name || article.profiles?.email || 'NETCAD Editorial Team'}
-                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <p style={{ fontSize: '0.75rem', color: isFeatured ? 'var(--accent)' : '#aaa', fontWeight: 'bold', margin: 0, textTransform: 'uppercase' }}>
+                        {article.profiles?.full_name || article.profiles?.email || 'NETCAD Editorial Team'}
+                      </p>
+                      <ArticleMetricsBadge articleId={article.id} createdAt={article.created_at} />
+                    </div>
                     <h2 style={{ 
                       fontSize: isFeatured ? '2rem' : '1.1rem', 
                       lineHeight: '1.3', 
