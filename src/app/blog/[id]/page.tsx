@@ -145,7 +145,7 @@ export default async function ArticleView(props: { params: Promise<{ id: string 
         </section>
 
         {/* Interactive Like Button & Total Views */}
-        <ArticleLikeButton articleId={article.id} createdAt={article.created_at} />
+        <ArticleLikeButton articleId={article.id} />
 
         {/* Author Bio & E-E-A-T Box */}
         <section style={{ 

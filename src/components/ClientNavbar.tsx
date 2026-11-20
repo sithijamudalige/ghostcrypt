@@ -70,10 +70,10 @@ export default function ClientNavbar() {
           Articles
         </Link>
         <Link href="/labs" style={getNavLinkStyle('/labs')}>
-          <span>🧪</span> Hands-On Labs
+          Hands-On Labs
         </Link>
         <Link href="/quizzes" style={getNavLinkStyle('/quizzes')}>
-          <span>🧠</span> Quizzes
+          Quizzes
         </Link>
         <Link href="/about" style={getNavLinkStyle('/about')}>
           About
